@@ -1,7 +1,7 @@
 clear;
 numItr = 3;
 
-v = variable(layer(1));
+v = variable(layer([0 1]));
 for i = 2:numItr
     a = v(i-1).delay();
     b = v(i-1).copy();

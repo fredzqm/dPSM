@@ -37,7 +37,7 @@ classdef variable < handle
             for i = 1:size(c,2)
                 c(i) = c(i).integrate();
             end
-            c(1).addWith(layer(1));
+            c(1).addWith(layer([0 1]));
             new = variable(c);
         end
         

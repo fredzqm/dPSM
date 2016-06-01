@@ -26,17 +26,15 @@ classdef layer < handle
 %                     nMat(i+1,j) = this.mat(i,j) / (i-j+2);
 %                 end
 %             end
-            s = size(this.mat);
-            newMat = this.mat * diag(1 ./ (1:s(2)));
+            n = size(this.mat , 2);
+            newMat = this.mat * diag(1 ./ (1:n));
 %           Integrate transition matrix
-            newMat = [zeros(1, s(2)+1) ; [zeros(s(1),1) newMat]];
             new = layer(newMat);
         end
         
         function addWith(this, added)
             s1 = size(this.mat);
             s2 = size(added.mat);
-            addedMat = added.mat;
             if s1(1) == 0
                 this.mat = added.mat;
                 return;
@@ -44,14 +42,14 @@ classdef layer < handle
                 return;
             elseif s1(1) == s2(1) && s1(2) == s2(2)
             elseif s1(1) >= s2(1) && s1(2) >= s2(2)
-                addedMat(s1(1), s1(2)) = 0;
+                added.mat(s1(1), s1(2)) = 0;
             elseif s1(1) <= s2(1) && s1(2) <= s2(2)
                 this.mat(s2(1), s2(2)) = 0;
             else
-                addedMat(s1(1), s1(2)) = 0;
+                added.mat(s1(1), s1(2)) = 0;
                 this.mat(s2(1), s2(2)) = 0;
             end
-            this.mat = this.mat + addedMat;
+            this.mat = this.mat + added.mat;
         end
         
         function new = multiple(a,b)
