@@ -7,12 +7,14 @@ classdef simulator < handle
         
         % represent the computational units in this simulator
         f ;
-        % t ; % start time of each segment
         
         computeTill; % the last segment
-        
+    end
+    properties (SetAccess = private)
         % configuration for computing
-        minResetTime = 0.05; % default minResetTime
+        delay
+        delaySeg
+        resetTime = 0.05; % resetTime*delaySeg is one delay time.
         minOrder = 5    ; % default minOrder
     end
 
@@ -20,31 +22,30 @@ classdef simulator < handle
         % take three terms -- funct (the function of comps)
         %                  -- initTime (the time to start compute)
         %                  -- relation (the relation of comps)
-        function created = simulator(funct , initTime , relation)
+        function created = simulator(funct , initTime, delay , relation)
 %             created.t = initTime;
             if ~isa(funct, 'double')
                 error('initial values of elements should be given in the array');
             end
             created.funct = funct;
+            created.delay = delay;
             [created.adderRel, created.multRel] = rephraseRel(relation);
             created.computeTill = initTime;
             created.f = compUnit(created, initTime);
             repeatCompute(created.f, 10);
         end
         
+        function setAccuracyParameters(this, resetTime, minOrder)
+            this.minOrder = minOrder;
+            this.delaySeg = ceil( this.delay / resetTime );
+            this.resetTime = this.delay / this.delaySeg;
+        end
+        
         function v = t(this, index)
             v = this.f(index).t;
         end
-        
-        function ret = simulatorValue(this, element, t)
-            if size( this.f, 2) == 0
-                ret = this.funct(element);
-            else
-                ret = this.calc(element, t, 0);
-            end
-        end
-        
-        % compute a certain time given the minResetTime and minorder 
+           
+        % compute a certain time given the resetTime and minorder 
         function compute(this , time)
             [index, upper] = this.findIndex(this.computeTill);
             if upper ~= inf
@@ -52,11 +53,12 @@ classdef simulator < handle
                 this.f(index+1:end) = []; 
             end
             repeatCompute(this.f(index) , this.minOrder);
-            u = ceil( time / this.minResetTime );
+            u = ceil( time / this.resetTime );
             status = 0;
             fprintf('Start computing\n');
             for x = 1 : u
-                unit = this.createUnit(this.computeTill + x * this.minResetTime);
+                unit = compUnit(this, this.computeTill + x * this.resetTime);
+                this.f = [this.f ; unit];
                 repeatCompute(unit , this.minOrder);
                 if x/u - status > 0.01
                     status = x/u;
@@ -64,12 +66,16 @@ classdef simulator < handle
                 end
             end
             fprintf('Finish computing\n');
-            this.computeTill = this.computeTill + u * this.minResetTime;
+            this.computeTill = this.computeTill + u * this.resetTime;
         end
                 
         % note that tt should be a time array in ascending order
         function vv = calc(this, element, tt, order)
             vv = tt ;
+            if size(this.f, 2) == 0
+                vv(:) = this.funct(1);
+                return;
+            end
             [segn, upper] = this.findIndex(tt(1));
             for i = 1 : size(tt , 2)
                 if tt(i) > upper
@@ -180,24 +186,7 @@ classdef simulator < handle
             end
             fprintf('Finish computing converge\n');
         end
-        
-        % create a computational unit with initial value provided with 
-        % this.simulatorValue(), which return the accurate function value
-        % if known, otherwise estimate with PSM.
-        function unit = createUnit(this, initTime)
-            [index, upper] = this.findIndex(initTime);
-            if this.t(index) == initTime
-                unit = this.f(index);
-            else
-                unit = compUnit(this, initTime);
-                if upper == inf
-                    this.f = [this.f ; unit];
-                else
-                    this.f = [this.f(1:index); unit; this.f(index+1:end)];
-                end
-            end
-        end
-        
+
     end
     
 end

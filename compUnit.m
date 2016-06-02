@@ -13,9 +13,9 @@ classdef compUnit
             unit.t = initTime;
             for i = 1 : size(simulator.funct, 2)
                 if i == 1
-                    unit.adder = Adder( simulator.simulatorValue(i, initTime) );
+                    unit.adder = Adder( simulator.calc(i, initTime, 0) );
                 else
-                    unit.adder(i) = Adder( simulator.simulatorValue(i, initTime) );
+                    unit.adder(i) = Adder( simulator.calc(i, initTime, 0) );
                 end
             end
             for i = 1 : size(simulator.multRel, 2)
