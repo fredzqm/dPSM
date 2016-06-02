@@ -9,7 +9,7 @@ classdef simulator < handle
         
         % represent the computational units in this simulator
         f ;
-%         t ; % start time of each segment
+        % t ; % start time of each segment
         
         computeTill; % the last segment
         

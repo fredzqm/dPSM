@@ -1,5 +1,5 @@
 clear;
-numItr = 3;
+numItr = 10;
 
 v = variable(layer([0 1]));
 for i = 2:numItr

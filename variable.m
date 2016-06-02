@@ -21,7 +21,7 @@ classdef variable < handle
         end
         
         function new = delay(this)
-            new = variable([layer([]) , this.cub]);
+            new = variable( [ layer([]) , this.cub ]);
         end
         
         function new = copy(this)
