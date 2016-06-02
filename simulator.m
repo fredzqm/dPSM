@@ -1,8 +1,6 @@
 classdef simulator < handle
     
     properties (SetAccess = public)
-        known;
-        % represent the differential equation system
         funct; % ideal function of each term
         adderRel; % calculate multipler relationship
         multRel; % calculate multipler relationship
@@ -24,18 +22,8 @@ classdef simulator < handle
         %                  -- relation (the relation of comps)
         function created = simulator(funct , initTime , relation)
 %             created.t = initTime;
-            if isa(funct, 'cell')
-                for i = 1 : size(funct, 2)
-                    if ~isa(funct{i}, 'function_handle')
-                        error('Exact functions should be given in the cell arrays');
-                    end
-                end
-                created.known = 1;
-            else
-                if ~isa(funct, 'double')
-                    error('initial values of elements should be given in the array');
-                end
-                created.known = 0;
+            if ~isa(funct, 'double')
+                error('initial values of elements should be given in the array');
             end
             created.funct = funct;
             [created.adderRel, created.multRel] = rephraseRel(relation);
@@ -49,21 +37,17 @@ classdef simulator < handle
         end
         
         function ret = simulatorValue(this, element, t)
-             if this.known
-                ret = this.funct{element}(t);
-             else
-                if size( this.f, 2) == 0
-                    ret = this.funct(element);
-                else
-                    ret = this.calc(element, t, 0);
-                end
-             end
+            if size( this.f, 2) == 0
+                ret = this.funct(element);
+            else
+                ret = this.calc(element, t, 0);
+            end
         end
         
         % compute a certain time given the minResetTime and minorder 
         function compute(this , time)
             [index, upper] = this.findIndex(this.computeTill);
-            if this.known == 0 && upper ~= inf
+            if upper ~= inf
                 % those compUnits might not be accurate enough
                 this.f(index+1:end) = []; 
             end
@@ -83,7 +67,7 @@ classdef simulator < handle
             this.computeTill = this.computeTill + u * this.minResetTime;
         end
                 
-        % note that tt should be a tiem array in ascending order
+        % note that tt should be a time array in ascending order
         function vv = calc(this, element, tt, order)
             vv = tt ;
             [segn, upper] = this.findIndex(tt(1));
@@ -196,23 +180,6 @@ classdef simulator < handle
             end
             fprintf('Finish computing converge\n');
         end
-                
-        function v = postInversion(this, k, t)
-            a = multFactor.stir(k);
-            b = (k+1) * log(t);
-            [c , s] = this.derivAcclog(k/t , k);
-            v = exp( a - b + c );
-            if (s > 0) == mod(k,2) 
-                v = - v;
-            end
-        end
-        
-        function [v , s] = derivAcclog(this , t , k)
-            unit = this.createUnit(t);
-            repeatCompute(unit, k);
-            [v , s] = unit.adder(1).derivLog(k + 1);
-        end
-   
         
         % create a computational unit with initial value provided with 
         % this.simulatorValue(), which return the accurate function value
@@ -228,9 +195,6 @@ classdef simulator < handle
                 else
                     this.f = [this.f(1:index); unit; this.f(index+1:end)];
                 end
-%                 if initTime > this.computeTil & initTime <= this.computeTil + this.minResetTime
-%                     this.computeTil = this;
-%                 end
             end
         end
         

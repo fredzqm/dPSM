@@ -15,11 +15,15 @@ classdef rel
         end
                 
         function r = normalize(r)
-            if size(r.comps, 1) > 1
+            if size(r.comps, 1) == 3
+                return;
+            end
+            if size(r.comps, 1) == 2
+                r.comps = [r.comps ; 0];
                 return;
             end
             oldComps = sort(r.comps);
-            newComps = [oldComps(1) ; 0];
+            newComps = [oldComps(1) ; 0; 0];
             for e = oldComps
                 if newComps(1, size(newComps, 2)) == e
                     newComps(2, size(newComps, 2)) = newComps(2, size(newComps, 2)) + 1;
