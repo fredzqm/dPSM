@@ -11,7 +11,7 @@ classdef simulator < handle
         
         % initial values
         initTime
-        initValue  % ideal function of each term
+        initValue  % A cell array of initValues (Can be polynomials)
         
         
         % configuration for computing
@@ -26,8 +26,8 @@ classdef simulator < handle
         %                  -- initTime (the time to start compute)
         %                  -- relation (the relation of comps)
         function created = simulator(initValue , initTime, delay , relation)
-            if ~isa(initValue, 'double')
-                error('initial values of elements should be given in the array');
+            if ~isa(initValue, 'cell')
+                error('initial values of elements should be given in the cell array');
             end
             created.initValue = initValue;
             created.delay = delay;
@@ -76,7 +76,7 @@ classdef simulator < handle
         function vv = calc(this, element, tt, order)
             vv = tt ;
             if size(this.f, 2) == 0
-                vv(:) = this.initValue(element);
+                vv(:) = this.initValue{element};
                 return;
             end
             [segn, upper] = this.findIndex(tt(1));

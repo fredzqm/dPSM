@@ -3,8 +3,7 @@
     %   Detailed explanation goes here
     properties
         rel ; % relationship to other component
-        taylor1 ; % taylor series, log(|coe|), coe*k^n/n!,
-        len ; % taylor3(:,1) store log(|coe|), while taylor3(:,2) store sign(coe)
+        taylor ; % taylor series, log(|coe|), coe*k^n/n!,
     end
     
     methods
@@ -13,9 +12,14 @@
             if nargin == 0
                 return;
             end
-            newComp.taylor1 = poly;
+            newComp.taylor = poly;
         end
            
-        
+        function vv = taylor1(this, ii)
+            while size(this.taylor, 2) < ii(end)
+                this.taylor = [this.taylor zeros(1, size(this.taylor, 2))];
+            end
+            vv = this.taylor(ii);
+        end
     end       
 end

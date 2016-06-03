@@ -22,17 +22,18 @@ classdef compUnit
             if s > 0
                 unit.delay = Delayer();
                 for i = 1 : s
-                    if simulator.initTime == initTime
-                        poly = zeros(simulator.minOrder, 1);
-                        poly(1) = simulator.initValue(1);
+                    poly = 1;
+                    if initTime == simulator.initTime
+                        for j = simulator.delayRel(i).list
+                            poly = conv(simulator.initValue{j}, poly);
+                        end
                     else
                         time = initTime - simulator.delay;
                         x = simulator.findIndex(time);
-                        poly = 1;
-                        for l = simulator.delayRel(i).list
-                            % wrong
-                            poly = conv(simulator.f(x).adder(x).taylor2, x , 'same');
+                        for j = simulator.delayRel(i).list
+                            poly = conv(simulator.f(x).adder(j).taylor1, poly , 'same');
                         end
+                        poly = poly * expandTransMat(size(poly, 2), initTime - simulator.t(x));
                     end
                     unit.delay(i) = Delayer(poly);
                 end
