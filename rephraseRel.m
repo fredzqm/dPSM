@@ -1,27 +1,29 @@
 function [adderRel, multRel, delayRel] = rephraseRel(relation)
     displayRelation(relation); % display relationship inputed
     multRel = [];
+    adderRel = [];
     delayRel = [];
     pq = PriorityQueue();
     for rel = relation
         addedList = sort(rel.comps);
         if ~pq.contains(addedList)
-            pq.insert( addedList , size(addedList,2) );
+            pq.insert(addedList , size(addedList,2) );
+        end
+        if size(rel.delaycomps, 1) ~= 0
+            delayRel(end+1).list = rel.delaycomps;
         end
     end
-    index = 0;
     while ~pq.isEmpty()
         list = pq.pop();
         if size(list,2) <= 1
             continue;
         end
         if size(list,2) == 2
-            index = index + 1;
-            multRel(index).list = list;
-            multRel(index).a.t = 0; % for adder
-            multRel(index).b.t = 0; % for adder
-            multRel(index).a.i = list(1);
-            multRel(index).b.i = list(2);
+            multRel(end+1).list = list;
+            multRel(end).a.t = 0; % for adder
+            multRel(end).b.t = 0; % for adder
+            multRel(end).a.i = list(1);
+            multRel(end).b.i = list(2);
             continue;
         end
         flag = 0;
@@ -29,23 +31,21 @@ function [adderRel, multRel, delayRel] = rephraseRel(relation)
             [flag, diffList] = includedIn(multRel(i).list, list);
             if flag
                 if size(diffList, 2) == 1
-                    index = index + 1;
-                    multRel(index).list = list;
-                    multRel(index).a.t = 1; % for adder
-                    multRel(index).b.t = 0; % for multiplier
-                    multRel(index).a.i = i;
-                    multRel(index).b.i = diffList(1);
+                    multRel(end+1).list = list;
+                    multRel(end).a.t = 1; % for multiplier
+                    multRel(end).b.t = 0; % for adder
+                    multRel(end).a.i = i;
+                    multRel(end).b.i = diffList(1);
                     break;
                 end
                 found = 0;
                 for j = size(multRel, 2): -1 : 1
                     if compareElement(multRel(j).list, diffList) == 0
-                        index = index + 1;
-                        multRel(index).list = list;
-                        multRel(index).a.t = 1; % for multiplier
-                        multRel(index).b.t = 1; % for multiplier
-                        multRel(index).a.i = i;
-                        multRel(index).b.i = j;
+                        multRel(end+1).list = list;
+                        multRel(end).a.t = 1; % for multiplier
+                        multRel(end).b.t = 1; % for multiplier
+                        multRel(end).a.i = i;
+                        multRel(end).b.i = j;
                         found = 1;
                         break;
                     end
@@ -83,12 +83,12 @@ function [adderRel, multRel, delayRel] = rephraseRel(relation)
         added.coefficient = rel.coefficient ;
         added.order = rel.order ;
         if size(rel.comps, 2) == 1
-            added.multer.t = 0;
+            added.multer.t = 0; % For adder
             added.multer.i = rel.comps;
         else
             for i = 1 : size(multRel, 2)
                 if compareElement(rel.comps, multRel(i).list) == 0
-                    added.multer.t = 1;
+                    added.multer.t = 1; % For multiplier
                     added.multer.i = i;
                     break;
                 end
@@ -98,21 +98,35 @@ function [adderRel, multRel, delayRel] = rephraseRel(relation)
             display(rel);
             error('cannot find needed multiplier!');
         end
-        if exist( 'adderRel' , 'var' )
-            if size(adderRel, 2) < rel.addTo
-                len = 0;
-            else
-                len = size( adderRel(rel.addTo).list , 2);
+        if size(rel.delaycomps, 1) ~= 0
+            delayerIndex = -1;
+            for i = 1 : size(delayRel, 2)
+                if compareElement(rel.delaycomps, delayRel(i).list) == 0
+                    delayerIndex = i;
+                    break;
+                end
             end
-            adderRel(rel.addTo).list(len+1) = added;
-        else
-            adderRel(rel.addTo).list(1).coefficient = added.coefficient;
-            adderRel(rel.addTo).list(1).order = added.order;
-            adderRel(rel.addTo).list(1).multer = added.multer;
+            if delayerIndex == -1
+                display(rel.delaycomps);
+                error('cannot find needed delayer!');
+            end
+            multRel(end+1).list = [];
+            multRel(end).a.t = added.multer.t; % copied from above
+            multRel(end).b.t = 2; % for delayer
+            multRel(end).a.i = added.multer.i;
+            multRel(end).b.i = delayerIndex;
+            added.multer.t = 1; % for multiplier
+            added.multer.i = size(multRel, 2);
         end
+        if size(adderRel, 2) < rel.addTo
+            len = 0;
+        else
+            len = size( adderRel(rel.addTo).list , 2);
+        end
+        adderRel(rel.addTo).list(len+1) = added;
     end
     
-    displayConvertedRel(adderRel, multRel); % display processed relationship
+    displayConvertedRel(adderRel, multRel, delayRel); % display processed relationship
 end
 
     
@@ -155,7 +169,7 @@ function displayRelation(relation)
 end
 
 
-function displayConvertedRel(adderRel, multRel)
+function displayConvertedRel(adderRel, multRel, delayRel)
     display('Output computational model meaning');
     for i = 1 : size(adderRel, 2)
         adder = '';
@@ -168,6 +182,13 @@ function displayConvertedRel(adderRel, multRel)
             adder = strcat(adder, added);
         end
         display(sprintf('Adder %d''\t=%s', i , adder ) );
+    end
+    for i = 1 : size(delayRel, 2)
+        x = '';
+        for k = delayRel(i).list
+            x = strcat(x, sprintf('Adder* %d',k));
+        end
+        display(sprintf('Delay %d''\t= %s', i , x ) );
     end
     for i = 1 : size(multRel, 2)
         list = '';
@@ -184,8 +205,12 @@ end
 function s = str(a)
     if a.t == 0
         s = sprintf('Adder %d', a.i);
-    else
+    elseif a.t == 1
         s = sprintf('Multer%d', a.i);
+    elseif a.t == 2
+        s = sprintf('Delay %d', a.i);
+    else
+        error('unspecified code for comp type');
     end
 end
 

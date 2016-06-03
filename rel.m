@@ -4,14 +4,19 @@ classdef rel
         coefficient;
         order;
         comps;
+        delaycomps;
     end
     
     methods
-        function newAdd =  rel(addTo, coefficient , order, comps )
+        function newAdd =  rel(addTo, coefficient , order, comps, delaycomps)
             newAdd.addTo = addTo ;
             newAdd.coefficient = coefficient ;
             newAdd.order = order ;
-            newAdd.comps = comps ;
+            newAdd.comps = sort(comps);
+            newAdd.delaycomps = [];
+            if nargin == 5
+                newAdd.delaycomps = sort(delaycomps);
+            end
         end
                 
         function r = normalize(r)

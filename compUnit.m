@@ -11,30 +11,26 @@ classdef compUnit
         % if known, otherwise estimate with PSM.
         function unit = compUnit(simulator, initTime)
             unit.t = initTime;
+            unit.adder = Adder(0);
             for i = 1 : size(simulator.initValue, 2)
-                if i == 1
-                    unit.adder = Adder( simulator.calc(i, initTime, 0) );
-                else
-                    unit.adder(i) = Adder( simulator.calc(i, initTime, 0) );
-                end
+                unit.adder(i) = Adder( simulator.calc(i, initTime, 0) );
             end
+%             delay
+            for i = 1 : size(simulator.delayRel, 2)
+                time = initTime - simulator.delay;
+                x = simulator.findIndex(time);
+                poly = 1;
+                for l = simulator.delayRel(i).list
+                    poly = conv(simulator.f(x).adder(x), x , 'same');
+                end
+                unit.delay(i) = Delayer(poly);
+            end
+            unit.multer = Multipler(unit.adder(1), unit.adder(1));
             for i = 1 : size(simulator.multRel, 2)
                 mult = simulator.multRel(i);
-                if mult.a.t
-                    a = unit.multer(mult.a.i);
-                else
-                    a = unit.adder(mult.a.i);
-                end
-                if mult.b.t
-                    b = unit.multer(mult.b.i);
-                else
-                    b = unit.adder(mult.b.i);
-                end
-                if i == 1
-                    unit.multer = Multipler(a, b);
-                else
-                    unit.multer(i) = Multipler(a, b);
-                end
+                a = extractComp(unit, mult.a);
+                b = extractComp(unit, mult.b);
+                unit.multer(i) = Multipler(a, b);
             end
             
             for i = 1 : size(simulator.adderRel, 2)
@@ -49,6 +45,16 @@ classdef compUnit
                             *initTime^order , k.order - order ,  comps );
                     end
                 end
+            end
+        end
+        
+        function x = extractComp(unit, a)
+            if a.t == 0
+                x = unit.adder(a.i);
+            elseif a.t == 1
+                x = unit.multer(a.i);
+            else
+                x = unit.delay(a.i);
             end
         end
         
