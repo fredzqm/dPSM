@@ -12,32 +12,41 @@ classdef compUnit
         % if known, otherwise estimate with PSM.
         function unit = compUnit(simulator, initTime)
             unit.t = initTime;
-            unit.adder = Adder(0);
-            for i = 1 : size(simulator.initValue, 2)
+            s = size(simulator.initValue, 2);
+            unit.adder = Adder();
+            for i = 1 : s
                 unit.adder(i) = Adder( simulator.calc(i, initTime, 0) );
             end
-            unit.delay = Delayer(0);
-            for i = 1 : size(simulator.delayRel, 2)
-                if simulator.initTime == initTime
-                    poly = zeros(simulator.minOrder, 1);
-                    poly(1) = simulator.initValue(1);
-                else
-                    time = initTime - simulator.delay;
-                    x = simulator.findIndex(time);
-                    poly = 1;
-                    for l = simulator.delayRel(i).list
-                        % wrong
-                        poly = conv(simulator.f(x).adder(x).taylor2, x , 'same');
+            
+            s = size(simulator.delayRel, 2);
+            if s > 0
+                unit.delay = Delayer();
+                for i = 1 : s
+                    if simulator.initTime == initTime
+                        poly = zeros(simulator.minOrder, 1);
+                        poly(1) = simulator.initValue(1);
+                    else
+                        time = initTime - simulator.delay;
+                        x = simulator.findIndex(time);
+                        poly = 1;
+                        for l = simulator.delayRel(i).list
+                            % wrong
+                            poly = conv(simulator.f(x).adder(x).taylor2, x , 'same');
+                        end
                     end
+                    unit.delay(i) = Delayer(poly);
                 end
-                unit.delay(i) = Delayer(poly);
             end
-            unit.multer = Multipler(unit.adder(1), unit.adder(1));
-            for i = 1 : size(simulator.multRel, 2)
-                mult = simulator.multRel(i);
-                a = extractComp(unit, mult.a);
-                b = extractComp(unit, mult.b);
-                unit.multer(i) = Multipler(a, b);
+            
+            s = size(simulator.multRel, 2);
+            if s > 0
+                unit.multer = Multipler();
+                for i = 1 : s
+                    mult = simulator.multRel(i);
+                    a = extractComp(unit, mult.a);
+                    b = extractComp(unit, mult.b);
+                    unit.multer(i) = Multipler(a, b);
+                end
             end
             
             for i = 1 : size(simulator.adderRel, 2)

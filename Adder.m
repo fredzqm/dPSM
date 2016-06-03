@@ -7,16 +7,15 @@
         taylor2 ; % use for derivative
         len ; % taylor3(:,1) store log(|coe|), while taylor3(:,2) store sign(coe)
     end
-       
+
     methods
         % init is the initial value of comp unit
         function newComp = Adder( init )
+            if nargin == 0
+                return;
+            end
             newComp.rel = [];
             newComp.taylor1 = init;
-%             newComp.taylor3(1,2) = sign(init);
-%             if sign(init) ~= 0
-%                 newComp.taylor3(1,1) = log(abs(init));
-%             end
             newComp.len = 1;
         end
         
@@ -35,11 +34,6 @@
         % add a relationship term
         function [this] = addR(this , coefficient , order , comps )
             if coefficient ~= 0
-%                 if coefficient < 0
-%                     newAdd.coeNeg = 1;
-%                 else
-%                     newAdd.coeNeg = 0;
-%                 end
                 newAdd.coeVal = coefficient ;
                 newAdd.order = order ;
                 newAdd.comps = comps ;
@@ -54,22 +48,6 @@
                 v = v + this.computeItem(k);
             end
             this.add(v);
-%             if size(this.rel, 2) ~= 1
-%                 next = zeros( size(this.rel, 2), 2);
-%                 for i = 1 : size(this.rel, 2)
-%                     [v, s] = this.computeItem( this.rel(i) );
-%                     next(i, 1) = v;
-%                     next(i, 2) = s;
-%                 end
-%                 ave = max(next(:,1));
-%                 next(:,1) = next(:,1) - ave;
-%                 next(:,1) = exp(next(:,1)) .* next(:,2);
-%                 value = sum(next(:,1));
-%                 this.add(log(abs(value)) + ave , sign(value) );
-%             else
-%                 [v, s] = this.computeItem( this.rel(1) );
-%                 this.add( v , s );
-%             end
         end
         
         % compute the result of one relation
@@ -80,12 +58,6 @@
                 return;
             end
             v = k.comps.taylor1(o) * k.coeVal;
-%             v = k.comps.taylor3(o , 1);
-%             s = k.comps.taylor3(o , 2);
-%             v = v + k.coeVal;
-%             if k.coeNeg
-%                 s = -s;
-%             end
         end
         
         function v = calc(this, t, order)

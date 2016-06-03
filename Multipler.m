@@ -5,32 +5,21 @@ classdef Multipler < handle
         a ;
         b ; % two computational unit to be multiplie
         taylor1;
-%         taylor2 ;
-%         taylor3 ; % taylor series, log(|coe|), coe*k^n/n!,
         len ; % taylor3(:,1) store log(|coe|), while taylor3(:,2) store sign(coe)
     end
     
     methods
         % init is the initial value of comp unit
         function newComp = Multipler(a, b)
+            if nargin == 0
+                return;
+            end
             newComp.a = a;
             newComp.b = b;
             newComp.taylor1 = [];
-%             newComp.taylor2 = [];
-%             newComp.taylor3 = [];
             newComp.len = 0;
         end
-        
-        % append another term of taylor's series
-%         function [this] = add( this, v , s )
-%             this.len = this.len + 1;
-%             if s == 0
-%                 this.taylor3(this.len , 1) = 0;
-%             else
-%                 this.taylor3(this.len , 1) = v;
-%             end
-%             this.taylor3(this.len , 2) = s;
-%         end
+  
         function this = add(this, v)
             this.taylor1(end+1) = v;
             this.len = size(this.taylor1, 2);
@@ -42,22 +31,7 @@ classdef Multipler < handle
             x = this.a.taylor1(1:o);
             y = fliplr( this.b.taylor1(1:o) );
             this.add(sum(x.*y));
-%             a = this.a.taylor3(1:o , :);
-%             b = flipud( this.b.taylor3(1:o , :) );
-%             ss = a(:,2) .* b(:,2);
-%             vv = a(:,1) + b(:,1);
-%             ave = max(vv) - 50;
-%             vv = vv - ave;
-%             vv = exp(vv) .* ss;
-%             v = sum(vv);
-%             s = sign(v);
-%             v = log(abs(v)) + ave;
-%             this.add( v , s );
         end
         
-%         function [v , s] = lastTermLog(this)
-%             v = this.taylor3(this.len , 1) + multFactor.logfactorial(this.len-1);
-%             s = this.taylor3(this.len , 2);
-%         end
     end       
 end
