@@ -3,6 +3,7 @@ classdef compUnit
         t;
         adder;
         multer;
+        delay;
      end
     
     methods
@@ -15,13 +16,19 @@ classdef compUnit
             for i = 1 : size(simulator.initValue, 2)
                 unit.adder(i) = Adder( simulator.calc(i, initTime, 0) );
             end
-%             delay
+            unit.delay = Delayer(0);
             for i = 1 : size(simulator.delayRel, 2)
-                time = initTime - simulator.delay;
-                x = simulator.findIndex(time);
-                poly = 1;
-                for l = simulator.delayRel(i).list
-                    poly = conv(simulator.f(x).adder(x), x , 'same');
+                if simulator.initTime == initTime
+                    poly = zeros(simulator.minOrder, 1);
+                    poly(1) = simulator.initValue(1);
+                else
+                    time = initTime - simulator.delay;
+                    x = simulator.findIndex(time);
+                    poly = 1;
+                    for l = simulator.delayRel(i).list
+                        % wrong
+                        poly = conv(simulator.f(x).adder(x).taylor2, x , 'same');
+                    end
                 end
                 unit.delay(i) = Delayer(poly);
             end

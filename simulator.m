@@ -3,8 +3,7 @@ classdef simulator < handle
     properties (SetAccess = public)
         f ;
         computeTill; % the last segment
-    end
-    properties (SetAccess = private)
+        
         % represent the computational units in this simulator
         adderRel; % calculate adder relationship
         multRel; % calculate multipler relationship
@@ -13,6 +12,7 @@ classdef simulator < handle
         % initial values
         initTime
         initValue  % ideal function of each term
+        
         
         % configuration for computing
         delay
@@ -35,7 +35,7 @@ classdef simulator < handle
             [created.adderRel, created.multRel, created.delayRel] = rephraseRel(relation);
             created.computeTill = initTime;
             created.f = compUnit(created, initTime);
-            repeatCompute(created.f, 10);
+%             repeatCompute(created.f, );
         end
         
         function setAccuracyParameters(this, resetTime, minOrder)

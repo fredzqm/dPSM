@@ -6,7 +6,7 @@ s = simulator( [0 1] , 0 , 1 , ...
     rel( 2 , -1, 0 , 1 ) ] );
 
 %% compute
-s.setAccuracyParameters(0.01, 100);
+s.setAccuracyParameters(0.001, 4);
 s.compute(20);
 
 %% display

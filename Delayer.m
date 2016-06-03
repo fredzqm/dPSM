@@ -11,7 +11,7 @@
     methods
         % init is the initial value of comp unit
         function newComp = Delayer( poly )
-            newComp.taylor3 = poly;
+            newComp.taylor3 = [log(abs(poly)) sign(poly)];
 %             newComp.rel = [];
 %             newComp.taylor3(1,2) = sign(init);
 %             if sign(init) ~= 0
