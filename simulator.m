@@ -73,7 +73,7 @@ classdef simulator < handle
         function vv = calc(this, element, tt, order)
             vv = tt ;
             if size(this.f, 2) == 0
-                vv(:) = this.funct(1);
+                vv(:) = this.funct(element);
                 return;
             end
             [segn, upper] = this.findIndex(tt(1));
