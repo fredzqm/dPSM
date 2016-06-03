@@ -1,16 +1,19 @@
 classdef simulator < handle
     
     properties (SetAccess = public)
-        funct; % ideal function of each term
-        adderRel; % calculate multipler relationship
-        multRel; % calculate multipler relationship
-        
-        % represent the computational units in this simulator
         f ;
-        
         computeTill; % the last segment
     end
     properties (SetAccess = private)
+        % represent the computational units in this simulator
+        adderRel; % calculate adder relationship
+        multRel; % calculate multipler relationship
+        delayRel; % calculate delay relationship
+        
+        % initial values
+        initTime
+        initValue  % ideal function of each term
+        
         % configuration for computing
         delay
         delaySeg
@@ -22,14 +25,14 @@ classdef simulator < handle
         % take three terms -- funct (the function of comps)
         %                  -- initTime (the time to start compute)
         %                  -- relation (the relation of comps)
-        function created = simulator(funct , initTime, delay , relation)
-%             created.t = initTime;
-            if ~isa(funct, 'double')
+        function created = simulator(initValue , initTime, delay , relation)
+            if ~isa(initValue, 'double')
                 error('initial values of elements should be given in the array');
             end
-            created.funct = funct;
+            created.initValue = initValue;
             created.delay = delay;
-            [created.adderRel, created.multRel] = rephraseRel(relation);
+            created.initTime = initTime;
+            [created.adderRel, created.multRel, created.delayRel] = rephraseRel(relation);
             created.computeTill = initTime;
             created.f = compUnit(created, initTime);
             repeatCompute(created.f, 10);
@@ -52,14 +55,14 @@ classdef simulator < handle
                 % those compUnits might not be accurate enough
                 this.f(index+1:end) = []; 
             end
-            repeatCompute(this.f(index) , this.minOrder);
+            this.f(size(this.f, 1)).repeatCompute(this.minOrder);
             u = ceil( time / this.resetTime );
             status = 0;
             fprintf('Start computing\n');
             for x = 1 : u
                 unit = compUnit(this, this.computeTill + x * this.resetTime);
                 this.f = [this.f ; unit];
-                repeatCompute(unit , this.minOrder);
+                unit.repeatCompute(this.minOrder);
                 if x/u - status > 0.01
                     status = x/u;
                     fprintf('Computing ... %2d %%\n', uint8(status*100));
@@ -73,7 +76,7 @@ classdef simulator < handle
         function vv = calc(this, element, tt, order)
             vv = tt ;
             if size(this.f, 2) == 0
-                vv(:) = this.funct(element);
+                vv(:) = this.initValue(element);
                 return;
             end
             [segn, upper] = this.findIndex(tt(1));
@@ -158,49 +161,20 @@ classdef simulator < handle
             plot( tt , this.calc(1, tt, order) , 'y');  
         end
 
-        % plot the curve to show convergence. will be used to find inverse laplace
-        % It does not necessary needed to be called after the simulator has compute
-        % in this range.
-        % It uses funct to initialize an array of comps used to cacluate
-        % the derivative, so it depends on derivAcc but not on func().
-        % We can use this function immediately after initialization
-        function vv = converge(this, tt, kk)
-            if size(tt, 2) ~= size(kk, 2)
-                if size(tt, 1) == 1 && size(tt, 2) == 1 
-                    tt = tt * ones(1, size(kk,2));
-                end
-                if size(kk, 1) == 1 && size(kk, 2) == 1 
-                    kk = kk * ones(1, size(tt,2));
-                end
-            end
-            vv = zeros(1, size(tt,2));
-            status = 0;
-            u = size(kk,2);
-            fprintf('Start computing converge\n');
-            for i = 1 : size(kk,2)
-                vv(i) = this.postInversion(kk(i), tt(i));
-                if i/u - status > 0.01
-                    status = i/u;
-                    fprintf('Computing %2d%% ... k = %2d t = %2f \n',uint8(status*100), kk(i), tt(i));
-                end
-            end
-            fprintf('Finish computing converge\n');
-        end
-
     end
     
 end
 
 
 % repeat compute all comps order times.
-function repeatCompute(unit, order)
-    for k = 1 : order
-        for i = unit.multer
-            i.compute();
-        end
-        for i = unit.adder
-            i.compute();
-        end
-    end
-    
-end
+% function repeatCompute(unit, order)
+%     for k = 1 : order
+%         for i = unit.multer
+%             i.compute();
+%         end
+%         for i = unit.adder
+%             i.compute();
+%         end
+%     end
+%     
+% end

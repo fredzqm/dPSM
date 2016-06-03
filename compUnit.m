@@ -11,7 +11,7 @@ classdef compUnit
         % if known, otherwise estimate with PSM.
         function unit = compUnit(simulator, initTime)
             unit.t = initTime;
-            for i = 1 : size(simulator.funct, 2)
+            for i = 1 : size(simulator.initValue, 2)
                 if i == 1
                     unit.adder = Adder( simulator.calc(i, initTime, 0) );
                 else
@@ -48,6 +48,17 @@ classdef compUnit
                         unit.adder(i).addR(k.coefficient*nchoosek(k.order,order)...
                             *initTime^order , k.order - order ,  comps );
                     end
+                end
+            end
+        end
+        
+        function repeatCompute(unit, order)
+            for k = 1 : order
+                for i = unit.multer
+                    i.compute();
+                end
+                for i = unit.adder
+                    i.compute();
                 end
             end
         end
