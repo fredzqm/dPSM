@@ -55,13 +55,13 @@ classdef simulator < handle
                 % those compUnits might not be accurate enough
                 this.f(index+1:end) = []; 
             end
-            this.f(size(this.f, 1)).repeatCompute(this.minOrder);
+            this.f(end).repeatCompute(this.minOrder);
             u = ceil( time / this.resetTime );
             status = 0;
             fprintf('Start computing\n');
             for x = 1 : u
                 unit = compUnit(this, this.computeTill + x * this.resetTime);
-                this.f = [this.f ; unit];
+                this.f(end+1) = unit;
                 unit.repeatCompute(this.minOrder);
                 if x/u - status > 0.01
                     status = x/u;
@@ -90,7 +90,7 @@ classdef simulator < handle
         end
         
         function [index, upper] = findIndex(this, t, pre)
-            high = size(this.f, 1);
+            high = size(this.f, 2);
             if nargin > 3 && pre + 2 <= high
                 if this.t(pre+1) < t && this.t(pre+2) > t
                     index = pre + 1;
@@ -165,16 +165,3 @@ classdef simulator < handle
     
 end
 
-
-% repeat compute all comps order times.
-% function repeatCompute(unit, order)
-%     for k = 1 : order
-%         for i = unit.multer
-%             i.compute();
-%         end
-%         for i = unit.adder
-%             i.compute();
-%         end
-%     end
-%     
-% end
