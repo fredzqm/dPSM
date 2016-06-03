@@ -47,7 +47,7 @@
             for k = this.rel
                 v = v + this.computeItem(k);
             end
-            this.add(v);
+            this.add(v / this.len);
         end
         
         % compute the result of one relation
