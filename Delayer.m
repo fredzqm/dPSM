@@ -2,7 +2,6 @@
     %ELE Summary of this class goes here
     %   Detailed explanation goes here
     properties
-        rel ; % relationship to other component
         taylor ; % taylor series, log(|coe|), coe*k^n/n!,
     end
     

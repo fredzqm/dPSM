@@ -52,11 +52,12 @@ classdef compUnit
             
             for i = 1 : size(simulator.adderRel, 2)
                 for k = simulator.adderRel(i).list
-                    if k.multer.t
-                        comps = unit.multer(k.multer.i);
-                    else
-                        comps = unit.adder(k.multer.i);
-                    end
+%                     if k.multer.t
+%                         comps = unit.multer(k.multer.i);
+%                     else
+%                         comps = unit.adder(k.multer.i);
+%                     end
+                    comps = extractComp(unit, k.multer);
                     for order = 0 : k.order
                         unit.adder(i).addR(k.coefficient*nchoosek(k.order,order)...
                             *initTime^order , k.order - order ,  comps );

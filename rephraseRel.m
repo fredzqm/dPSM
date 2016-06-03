@@ -94,29 +94,50 @@ function [adderRel, multRel, delayRel] = rephraseRel(relation)
                 end
             end
         end
-        if ~ isfield( added , 'multer')
-            display(rel);
-            error('cannot find needed multiplier!');
-        end
         if size(rel.delaycomps, 1) ~= 0
-            delayerIndex = -1;
-            for i = 1 : size(delayRel, 2)
-                if compareElement(rel.delaycomps, delayRel(i).list) == 0
-                    delayerIndex = i;
-                    break;
+            if size(rel.comps, 1) == 0
+                delayerIndex = -1;
+                for i = 1 : size(delayRel, 2)
+                    if compareElement(rel.delaycomps, delayRel(i).list) == 0
+                        delayerIndex = i;
+                        break;
+                    end
                 end
+                if delayerIndex == -1
+                    display(rel.delaycomps);
+                    error('cannot find needed delayer!');
+                end
+                added.multer.t = 2; % for delayer
+                added.multer.i = delayerIndex;
+            else
+                if ~ isfield( added , 'multer')
+                    display(rel);
+                    error('cannot find needed multiplier!');
+                end
+                delayerIndex = -1;
+                for i = 1 : size(delayRel, 2)
+                    if compareElement(rel.delaycomps, delayRel(i).list) == 0
+                        delayerIndex = i;
+                        break;
+                    end
+                end
+                if delayerIndex == -1
+                    display(rel.delaycomps);
+                    error('cannot find needed delayer!');
+                end
+                multRel(end+1).list = [];
+                multRel(end).a.t = added.multer.t; % copied from above
+                multRel(end).b.t = 2; % for delayer
+                multRel(end).a.i = added.multer.i;
+                multRel(end).b.i = delayerIndex;
+                added.multer.t = 1; % for multiplier
+                added.multer.i = size(multRel, 2);
             end
-            if delayerIndex == -1
-                display(rel.delaycomps);
-                error('cannot find needed delayer!');
+        else
+            if ~ isfield( added , 'multer')
+                display(rel);
+                error('cannot find needed multiplier!');
             end
-            multRel(end+1).list = [];
-            multRel(end).a.t = added.multer.t; % copied from above
-            multRel(end).b.t = 2; % for delayer
-            multRel(end).a.i = added.multer.i;
-            multRel(end).b.i = delayerIndex;
-            added.multer.t = 1; % for multiplier
-            added.multer.i = size(multRel, 2);
         end
         if size(adderRel, 2) < rel.addTo
             len = 0;
