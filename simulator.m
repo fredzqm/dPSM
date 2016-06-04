@@ -15,7 +15,6 @@ classdef simulator < handle
         
         % configuration for computing
         delay
-        delaySeg
         resetTime = 0.05; % resetTime*delaySeg is one delay time.
         minOrder = 5    ; % default minOrder
     end
@@ -24,24 +23,21 @@ classdef simulator < handle
         % take three terms -- funct (the function of comps)
         %                  -- initTime (the time to start compute)
         %                  -- relation (the relation of comps)
-        function created = simulator(initValue , initTime, delay , relation)
+        function created = simulator(initValue , initTime, delay , relation, config)
             if ~isa(initValue, 'cell')
                 error('initial values of elements should be given in the cell array');
             end
             created.initValue = initValue;
             created.delay = delay;
             created.initTime = initTime;
+            if nargin >= 5
+                created.resetTime = config.resetTime;
+                created.minOrder = config.order;
+            end
             [created.adderRel, created.multRel, created.delayRel] = rephraseRel(relation);
             created.f = compUnit(created, initTime);
-%             repeatCompute(created.f, );
         end
-        
-        function setAccuracyParameters(this, resetTime, minOrder)
-            this.minOrder = minOrder;
-            this.delaySeg = ceil( this.delay / resetTime );
-            this.resetTime = this.delay / this.delaySeg;
-        end
-        
+              
         function v = t(this, index)
             v = this.f(index).t;
         end

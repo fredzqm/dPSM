@@ -1,12 +1,14 @@
  %% initialize sqrt(x+1)*cos(x^2)
 clear;
+
+config.resetTime = 0.001;
+config.order = 7;
 s = simulator({1 0 1}, 0 , 1, ...
    [rel(1,1/2, 0, [1 3]) rel(1,-2, 1, 2) ...
     rel(2,1/2, 0, [2 3]) rel(2, 2, 1, 1) ...
-        rel(3, -1, 0, [3 3]) ] );
+        rel(3, -1, 0, [3 3]) ], config );
 
 %% compute
-s.setAccuracyParameters(0.001, 7);
 s.compute(20);
 
 %% plot taylor

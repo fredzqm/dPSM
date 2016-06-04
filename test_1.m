@@ -1,12 +1,14 @@
 % x(t) = sin(t)
 %% initialize
 clear;
+
+config.resetTime = 0.001;
+config.order = 4;
 s = simulator( {0 1} , 0 , 1 , ...
    [rel( 1 , 1 , 0 , 2 ) ...
-    rel( 2 , -1, 0 , 1 ) ] );
+    rel( 2 , -1, 0 , 1 ) ], config );
 
 %% compute
-s.setAccuracyParameters(0.001, 4);
 s.compute(20);
 
 %% display
