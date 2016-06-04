@@ -2,7 +2,6 @@ classdef simulator < handle
     
     properties (SetAccess = public)
         f ;
-        computeTill; % the last segment
         
         % represent the computational units in this simulator
         adderRel; % calculate adder relationship
@@ -33,7 +32,6 @@ classdef simulator < handle
             created.delay = delay;
             created.initTime = initTime;
             [created.adderRel, created.multRel, created.delayRel] = rephraseRel(relation);
-            created.computeTill = initTime;
             created.f = compUnit(created, initTime);
 %             repeatCompute(created.f, );
         end
@@ -50,17 +48,13 @@ classdef simulator < handle
            
         % compute a certain time given the resetTime and minorder 
         function compute(this , time)
-            [index, upper] = this.findIndex(this.computeTill);
-            if upper ~= inf
-                % those compUnits might not be accurate enough
-                this.f(index+1:end) = []; 
-            end
             this.f(end).repeatCompute(this.minOrder);
             u = ceil( time / this.resetTime );
             status = 0;
             fprintf('Start computing\n');
+            startTime = this.f(end).t;
             for x = 1 : u
-                unit = compUnit(this, this.computeTill + x * this.resetTime);
+                unit = compUnit(this, startTime + x * this.resetTime);
                 this.f(end+1) = unit;
                 unit.repeatCompute(this.minOrder);
                 if x/u - status > 0.01
@@ -69,7 +63,6 @@ classdef simulator < handle
                 end
             end
             fprintf('Finish computing\n');
-            this.computeTill = this.computeTill + u * this.resetTime;
         end
                 
         % note that tt should be a time array in ascending order
