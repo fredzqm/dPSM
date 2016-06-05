@@ -3,8 +3,8 @@ clear;
 
 config.resetTime = 1;
 config.order = 10;
-s = simulator({1}, 0 , 1, ...
-   [rel(1,1, 0, [1], 1) ], config);
+problem = DefaultProblem( rel(1,1, 0, 1 , 1) );
+s = simulator({1}, 0 , 1, problem , config);
 
 %% compute
 s.compute(2);

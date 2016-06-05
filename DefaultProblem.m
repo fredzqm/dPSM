@@ -1,3 +1,21 @@
+classdef DefaultProblem
+    properties
+        adderRel;
+        multRel;
+        delayRel;
+    end
+
+    methods
+        function this = DefaultProblem(relation)
+            [this.adderRel, this.multRel, this.delayRel] = rephraseRel(relation);
+        end
+        
+        function unit = createCompUnit(this, simulator, initTime)
+            unit = DefaultCompUnit(this, simulator, initTime);
+        end
+    end
+end
+
 function [adderRel, multRel, delayRel] = rephraseRel(relation)
     displayRelation(relation); % display relationship inputed
     multRel = [];
@@ -78,7 +96,7 @@ function [adderRel, multRel, delayRel] = rephraseRel(relation)
               end
         end
     end
-    
+
     for rel = relation
         added.coefficient = rel.coefficient ;
         added.order = rel.order ;
@@ -146,11 +164,11 @@ function [adderRel, multRel, delayRel] = rephraseRel(relation)
         end
         adderRel(rel.addTo).list(len+1) = added;
     end
-    
+
     displayConvertedRel(adderRel, multRel, delayRel); % display processed relationship
 end
 
-    
+
 function [ret, diffList] = includedIn(a, b)
     ret = 0;
     diffList = b;
@@ -282,5 +300,6 @@ function [a, b] = splitList(list)
     a = list(1:i);
     b = list(i+1:end);
 end
+
 
 

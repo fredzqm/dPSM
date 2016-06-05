@@ -4,16 +4,14 @@ classdef simulator < handle
         f ;
         
         % represent the computational units in this simulator
-        adderRel; % calculate adder relationship
-        multRel; % calculate multipler relationship
-        delayRel; % calculate delay relationship
+        problem;
         
         % initial values
         initTime
         initValue  % A cell array of initValues (Can be polynomials)
+        delay
         
         % configuration for computing
-        delay
         resetTime = 0.05; % resetTime*delaySeg is one delay time.
         minOrder = 5    ; % default minOrder
     end
@@ -22,7 +20,7 @@ classdef simulator < handle
         % take three terms -- funct (the function of comps)
         %                  -- initTime (the time to start compute)
         %                  -- relation (the relation of comps)
-        function created = simulator(initValue , initTime, delay , relation, config)
+        function created = simulator(initValue , initTime, delay , problem, config)
             if ~isa(initValue, 'cell')
                 error('initial values of elements should be given in the cell array');
             end
@@ -33,8 +31,9 @@ classdef simulator < handle
                 created.resetTime = config.resetTime;
                 created.minOrder = config.order;
             end
-            [created.adderRel, created.multRel, created.delayRel] = rephraseRel(relation);
-            created.f = compUnit(created, initTime);
+            created.problem = problem;
+%             [created.adderRel, created.multRel, created.delayRel] = rephraseRel(problem);
+            created.f = created.problem.createCompUnit(created, initTime);
         end
               
           
@@ -46,7 +45,7 @@ classdef simulator < handle
             fprintf('Start computing\n');
             startTime = this.f(end).t;
             for x = 1 : u
-                unit = compUnit(this, startTime + x * this.resetTime);
+                unit = this.problem.createCompUnit(this, startTime + x * this.resetTime);
                 this.f(end+1) = unit;
                 unit.repeatCompute(this.minOrder);
                 if x/u - status > 0.01

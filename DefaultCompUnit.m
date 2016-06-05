@@ -1,4 +1,4 @@
-classdef compUnit
+classdef DefaultCompUnit
      properties (SetAccess = public)
         t;
         adder;
@@ -10,7 +10,7 @@ classdef compUnit
         % create a computational unit with initial value provided with 
         % this.simulatorValue(), which return the accurate function value
         % if known, otherwise estimate with PSM.
-        function unit = compUnit(simulator, initTime)
+        function unit = DefaultCompUnit(factory, simulator, initTime)
             unit.t = initTime;
             s = size(simulator.initValue, 2);
             unit.adder = Adder();
@@ -25,20 +25,20 @@ classdef compUnit
                 end
             end
             
-            s = size(simulator.delayRel, 2);
+            s = size(factory.delayRel, 2);
             if s > 0
                 unit.delay = Delayer();
                 for i = 1 : s
                     poly = 1;
                     time = initTime - simulator.delay;
                     if time < simulator.initTime
-                        for j = simulator.delayRel(i).list
+                        for j = factory.delayRel(i).list
                             poly = conv(simulator.initValue{j}, poly);
                         end
                         poly = poly * expandTransMat(size(poly, 2), time - simulator.initTime);
                     else
                         comp = simulator.findComp(initTime - simulator.delay);
-                        for j = simulator.delayRel(i).list
+                        for j = factory.delayRel(i).list
                             poly = conv(comp.adder(j).taylor1, poly , 'same');
                         end
                         poly = poly * expandTransMat(size(poly, 2), time - comp.t);
@@ -47,19 +47,19 @@ classdef compUnit
                 end
             end
             
-            s = size(simulator.multRel, 2);
+            s = size(factory.multRel, 2);
             if s > 0
                 unit.multer = Multipler();
                 for i = 1 : s
-                    mult = simulator.multRel(i);
+                    mult = factory.multRel(i);
                     a = extractComp(unit, mult.a);
                     b = extractComp(unit, mult.b);
                     unit.multer(i) = Multipler(a, b);
                 end
             end
             
-            for i = 1 : size(simulator.adderRel, 2)
-                for k = simulator.adderRel(i).list
+            for i = 1 : size(factory.adderRel, 2)
+                for k = factory.adderRel(i).list
                     comps = extractComp(unit, k.multer);
                     for order = 0 : k.order
                         unit.adder(i).addR(k.coefficient*nchoosek(k.order,order)...
