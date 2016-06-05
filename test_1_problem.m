@@ -5,17 +5,18 @@ classdef test_1_problem < AbstractProblem
         t
         a
         b
+        o
     end
     
     methods
         
         function unit = createFirstCompUnit(this, simulator)
+            order = simulator.minOrder;
+            
             unit = test_1_problem;
             unit.t = 0;
-            unit.a = Adder(0);
-            unit.b = Adder(1);
-            unit.a.addR(1, 0, unit.b);
-            unit.b.addR(-1, 0, unit.a);
+            unit.a = Poly(order, 0);
+            unit.b = Poly(order, 1);
         end
         
         function unit = createCompUnit(this, simulator, initTime)
@@ -24,19 +25,17 @@ classdef test_1_problem < AbstractProblem
             lastComp = simulator.f(end);
             unit.a = Adder( lastComp.a.calc(initTime - lastComp.t, 0) );
             unit.b = Adder( lastComp.b.calc(initTime - lastComp.t, 0) );
-            unit.a.addR(1, 0, unit.b);
-            unit.b.addR(-1, 0, unit.a);
         end
         
-        function repeatCompute(unit, order)
+        function repeatCompute(t, order)
             for k = 1 : order
-                unit.a.compute();
-                unit.b.compute();
+                t.o = k;
+                
+                t.addIntegTo(t.a, t.get(t.b) * 1);
+                t.addIntegTo(t.b, t.get(t.a) * -1);
             end
         end
-        function v = calc(this, time, order)
-            v = this.a.calc(time - this.t, order);
-        end
+
     end
     
 end
