@@ -21,13 +21,9 @@ classdef simulator < handle
         %                  -- initTime (the time to start compute)
         %                  -- relation (the relation of comps)
         function created = simulator(problem, config)
-            if nargin >= 5
-                created.resetTime = config.resetTime;
-                created.minOrder = config.order;
-            end
-%             created.initTime = problem.initTime;
+            created.resetTime = config.resetTime;
+            created.minOrder = config.order;
             created.problem = problem;
-%             [created.adderRel, created.multRel, created.delayRel] = rephraseRel(problem);
             created.f = created.problem.createFirstCompUnit(created);
         end
               
