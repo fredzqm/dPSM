@@ -11,7 +11,7 @@ classdef Poly < handle
             end
         end
         
-        function v = calc(poly,t, order)
+        function v = calc(poly, t, order)
             if order == 0
                 if t == 0
                     v =  poly.c(1);

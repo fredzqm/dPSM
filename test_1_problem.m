@@ -12,7 +12,6 @@ classdef test_1_problem < AbstractProblem
         
         function unit = createFirstCompUnit(this, simulator)
             order = simulator.minOrder;
-            
             unit = test_1_problem;
             unit.t = 0;
             unit.a = Poly(order, 0);
@@ -20,11 +19,12 @@ classdef test_1_problem < AbstractProblem
         end
         
         function unit = createCompUnit(this, simulator, initTime)
+            order = simulator.minOrder;
             unit = test_1_problem;
             unit.t = initTime;
             lastComp = simulator.f(end);
-            unit.a = Adder( lastComp.a.calc(initTime - lastComp.t, 0) );
-            unit.b = Adder( lastComp.b.calc(initTime - lastComp.t, 0) );
+            unit.a = Poly(order, lastComp.a.calc(initTime - lastComp.t, 0));
+            unit.b = Poly(order, lastComp.b.calc(initTime - lastComp.t, 0));
         end
         
         function repeatCompute(t, order)
@@ -34,6 +34,10 @@ classdef test_1_problem < AbstractProblem
                 t.addIntegTo(t.a, t.get(t.b) * 1);
                 t.addIntegTo(t.b, t.get(t.a) * -1);
             end
+        end
+        
+        function v = mainVariable(this)
+            v = this.a;
         end
 
     end
