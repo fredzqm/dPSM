@@ -4,8 +4,9 @@ clear;
 
 config.resetTime = 0.001;
 config.order = 4;
-problem = DefaultProblem([rel( 1 , 1 , 0 , 2 ) rel( 2 , -1, 0 , 1 ) ])
-s = simulator( {0 1} , 0 , 1 , problem , config );
+problem = DefaultProblem({0 1} , 0 , 1 , ...
+    [rel( 1 , 1 , 0 , 2 ) rel( 2 , -1, 0 , 1 ) ]);
+s = simulator( problem , config );
 
 %% compute
 s.compute(20);

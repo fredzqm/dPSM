@@ -1,13 +1,27 @@
 classdef DefaultProblem
     properties
+        initTime;
+        initValue;
+        delay;
+        
         adderRel;
         multRel;
         delayRel;
     end
 
     methods
-        function this = DefaultProblem(relation)
+        function this = DefaultProblem(initValue , initTime, delay , relation)
+            if ~isa(initValue, 'cell')
+                error('initial values of elements should be given in the cell array');
+            end
+            this.initValue = initValue;
+            this.delay = delay;
+            this.initTime = initTime;
             [this.adderRel, this.multRel, this.delayRel] = rephraseRel(relation);
+        end
+        
+        function unit = createFirstCompUnit(this, simulator)
+            unit = DefaultCompUnit(this, simulator, this.initTime);
         end
         
         function unit = createCompUnit(this, simulator, initTime)

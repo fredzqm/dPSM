@@ -12,11 +12,11 @@ classdef DefaultCompUnit
         % if known, otherwise estimate with PSM.
         function unit = DefaultCompUnit(factory, simulator, initTime)
             unit.t = initTime;
-            s = size(simulator.initValue, 2);
+            s = size(factory.initValue, 2);
             unit.adder = Adder();
             if size(simulator.f, 2) == 0
                 for i = 1 : s
-                    unit.adder(i) = Adder( simulator.initValue{i} );
+                    unit.adder(i) = Adder( factory.initValue{i} );
                 end
             else
                 lastComp = simulator.f(end);
@@ -30,14 +30,14 @@ classdef DefaultCompUnit
                 unit.delay = Delayer();
                 for i = 1 : s
                     poly = 1;
-                    time = initTime - simulator.delay;
-                    if time < simulator.initTime
+                    time = initTime - factory.delay;
+                    if time < factory.initTime
                         for j = factory.delayRel(i).list
-                            poly = conv(simulator.initValue{j}, poly);
+                            poly = conv(factory.initValue{j}, poly);
                         end
-                        poly = poly * expandTransMat(size(poly, 2), time - simulator.initTime);
+                        poly = poly * expandTransMat(size(poly, 2), time - factory.initTime);
                     else
-                        comp = simulator.findComp(initTime - simulator.delay);
+                        comp = simulator.findComp(initTime - factory.delay);
                         for j = factory.delayRel(i).list
                             poly = conv(comp.adder(j).taylor1, poly , 'same');
                         end

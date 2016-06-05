@@ -7,9 +7,9 @@ classdef simulator < handle
         problem;
         
         % initial values
-        initTime
-        initValue  % A cell array of initValues (Can be polynomials)
-        delay
+%         initTime
+%         initValue  % A cell array of initValues (Can be polynomials)
+%         delay
         
         % configuration for computing
         resetTime = 0.05; % resetTime*delaySeg is one delay time.
@@ -20,20 +20,15 @@ classdef simulator < handle
         % take three terms -- funct (the function of comps)
         %                  -- initTime (the time to start compute)
         %                  -- relation (the relation of comps)
-        function created = simulator(initValue , initTime, delay , problem, config)
-            if ~isa(initValue, 'cell')
-                error('initial values of elements should be given in the cell array');
-            end
-            created.initValue = initValue;
-            created.delay = delay;
-            created.initTime = initTime;
+        function created = simulator(problem, config)
             if nargin >= 5
                 created.resetTime = config.resetTime;
                 created.minOrder = config.order;
             end
+%             created.initTime = problem.initTime;
             created.problem = problem;
 %             [created.adderRel, created.multRel, created.delayRel] = rephraseRel(problem);
-            created.f = created.problem.createCompUnit(created, initTime);
+            created.f = created.problem.createFirstCompUnit(created);
         end
               
           
@@ -59,10 +54,6 @@ classdef simulator < handle
         % note that tt should be a time array in ascending order
         function vv = calc(this, tt, order)
             vv = zeros(size(tt));
-%             if size(this.f, 2) == 0
-%                 vv(:) = this.initValue{element};
-%                 return;
-%             end
             i = 1;
             len = size(tt, 2);
             while i <= len
@@ -77,7 +68,7 @@ classdef simulator < handle
             if size(t, 2) == 0
                 error('Should not send in a empty t');
             end
-            i = floor((t(1) - this.initTime) / this.resetTime) + 1;
+            i = floor((t(1) - this.f(1).t ) / this.resetTime) + 1;
             if i >= size(this.f, 2)
                 i = size(this.f, 2);
                 compUnit = this.f(i);
@@ -90,7 +81,7 @@ classdef simulator < handle
                     else
                         untilTime = compUnit.t + this.resetTime;
                         i = floor((untilTime - t(1)) / (t(2)-t(1))) + 1;
-                        if i > size(t, 2)
+                        if i >= size(t, 2)
                             until = size(t, 2);
                         else
                             while t(i) > untilTime
