@@ -66,17 +66,29 @@
                     v =  this.taylor1(1, 1);
                     return;
                 end
-                x = (t.^(0:this.len-1)) .* this.taylor1;
-                v = sum(x);
+                v = t;
+                v(:) = this.taylor1(end);
+                for i = size(this.taylor1, 2)-1 : -1 : 1
+                    v = v .* t;
+                    v = v + this.taylor1(i);
+                end
+%                 x = (t.^(0:this.len-1)) .* this.taylor1;
+%                 v = sum(x);
             else
                 this.updateDerv();
                 if t == 0
                     v = this.taylor2(1+order);
                     return;
                 end
-                x = this.taylor2(1+order:end);
-                x = x .* (t.^(0:this.len-order-1)) ./ factorial(0:this.len-order-1);
-                v = sum(x);
+                v = t;
+                v(:) = this.taylor2(end);
+                for i = size(this.taylor2, 2)-1 : -1 : 1 + order
+                    v = v .* t / (i - order);
+                    v = v + this.taylor2(i);
+                end
+%                 x = this.taylor2(1+order:end);
+%                 x = x .* (t.^(0:this.len-order-1)) ./ factorial(0:this.len-order-1);
+%                 v = sum(x);
             end
         end
        

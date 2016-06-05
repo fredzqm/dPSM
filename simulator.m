@@ -12,7 +12,6 @@ classdef simulator < handle
         initTime
         initValue  % A cell array of initValues (Can be polynomials)
         
-        
         % configuration for computing
         delay
         resetTime = 0.05; % resetTime*delaySeg is one delay time.
@@ -38,10 +37,7 @@ classdef simulator < handle
             created.f = compUnit(created, initTime);
         end
               
-        function v = t(this, index)
-            v = this.f(index).t;
-        end
-           
+          
         % compute a certain time given the resetTime and minorder 
         function compute(this , time)
             this.f(end).repeatCompute(this.minOrder);
@@ -62,73 +58,51 @@ classdef simulator < handle
         end
                 
         % note that tt should be a time array in ascending order
-        function vv = calc(this, element, tt, order)
-            vv = tt ;
-            if size(this.f, 2) == 0
-                vv(:) = this.initValue{element};
-                return;
-            end
-            [segn, upper] = this.findIndex(tt(1));
-            for i = 1 : size(tt , 2)
-                if tt(i) > upper
-                    [segn, upper] = this.findIndex(tt(i), segn);
-                end
-                vv(i) = this.f(segn).adder(element).calc( tt(i) - this.t(segn), order);
-                continue;
+        function vv = calc(this, tt, order)
+            vv = zeros(size(tt));
+%             if size(this.f, 2) == 0
+%                 vv(:) = this.initValue{element};
+%                 return;
+%             end
+            i = 1;
+            len = size(tt, 2);
+            while i <= len
+                [compUnit until] = this.findComp(tt(i:end));
+                j = i + until - 1;
+                vv(i:j) = compUnit.calc(tt(i:j), order);
+                i = j + 1;
             end
         end
         
-        function [index, upper] = findIndex(this, t, pre)
-            high = size(this.f, 2);
-            if nargin > 3 && pre + 2 <= high
-                if this.t(pre+1) < t && this.t(pre+2) > t
-                    index = pre + 1;
-                    upper = this.t(pre+2);
-                    return;
-                end
+        function [compUnit, until] = findComp(this, t)
+            if size(t, 2) == 0
+                error('Should not send in a empty t');
             end
-            if high == 1
-                index = 1;
-                upper = inf;
-                return;
-            end
-            if t >= this.t(high)
-                index = high;
-                upper = inf;
-                return;
-            end
-            if t < this.t(2)
-                index = 1;
-                upper = this.t(2);
-                return;
-            end
-            low = 1;
-            while(1)
-                k = (high - low) / (this.t(high) - this.t(low));
-                index = floor((t - this.t(low)) * k) + low;
-                if index <= low || index >= high
-                    while(t > this.t(index+1))
-                        index = index + 1;
+            i = floor((t(1) - this.initTime) / this.resetTime) + 1;
+            if i >= size(this.f, 2)
+                i = size(this.f, 2);
+                compUnit = this.f(i);
+                until = 1;
+            else
+                compUnit = this.f(i);
+                if nargout >= 2
+                    if size(t, 2) == 1
+                        until = 1;
+                    else
+                        untilTime = compUnit.t + this.resetTime;
+                        i = floor((untilTime - t(1)) / (t(2)-t(1))) + 1;
+                        if i > size(t, 2)
+                            until = size(t, 2);
+                        else
+                            while t(i) > untilTime
+                                i = i - 1;
+                            end
+                            while t(i + 1) < untilTime
+                                i = i + 1;
+                            end
+                            until = i;
+                        end
                     end
-                    while(t < this.t(index))
-                        index = index - 1;
-                    end
-                    upper = this.t(index + 1);
-                    return;
-                end
-                if this.t(index) <= t
-                    if this.t(index + 1) > t
-                        upper = this.t(index + 1);
-                        return;
-                    end
-                    low = index;
-                else
-                    if this.t(index - 1) <= t
-                        index = index - 1;
-                        upper = this.t(index);
-                        return;
-                    end
-                    high = index - 1;
                 end
             end
         end
@@ -136,18 +110,18 @@ classdef simulator < handle
         % plot the function and make comparasion
         function plot(this , tt , compare)
             tts = min(tt): (max(tt)-min(tt))/70 : max(tt);
-            plot( tt , this.calc(1, tt, 0) , '-'  , tts , compare(tts) , '.');             
+            plot( tt , this.calc(tt, 0) , '-'  , tts , compare(tts) , '.');             
         end
         
         % plot the comparative error
         function plotError(this , tt , compare)
-            err(tt, this.calc(1, tt, 0) , compare);
+            err(tt, this.calc(tt, 0) , compare);
         end
                
         % plot the derivative
         function plotDeriv(this , tt , order)
             hold on
-            plot( tt , this.calc(1, tt, order) , 'y');  
+            plot( tt , this.calc(tt, order) , 'y');  
         end
 
     end

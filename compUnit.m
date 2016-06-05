@@ -14,8 +14,15 @@ classdef compUnit
             unit.t = initTime;
             s = size(simulator.initValue, 2);
             unit.adder = Adder();
-            for i = 1 : s
-                unit.adder(i) = Adder( simulator.calc(i, initTime, 0) );
+            if size(simulator.f, 2) == 0
+                for i = 1 : s
+                    unit.adder(i) = Adder( simulator.initValue{i} );
+                end
+            else
+                lastComp = simulator.f(end);
+                for i = 1 : s
+                    unit.adder(i) = Adder( lastComp.adder(i).calc(initTime - lastComp.t, 0) );
+                end
             end
             
             s = size(simulator.delayRel, 2);
@@ -30,11 +37,11 @@ classdef compUnit
                         end
                         poly = poly * expandTransMat(size(poly, 2), time - simulator.initTime);
                     else
-                        x = simulator.findIndex(initTime - simulator.delay);
+                        comp = simulator.findComp(initTime - simulator.delay);
                         for j = simulator.delayRel(i).list
-                            poly = conv(simulator.f(x).adder(j).taylor1, poly , 'same');
+                            poly = conv(comp.adder(j).taylor1, poly , 'same');
                         end
-                        poly = poly * expandTransMat(size(poly, 2), time - simulator.t(x));
+                        poly = poly * expandTransMat(size(poly, 2), time - comp.t);
                     end
                     unit.delay(i) = Delayer(poly);
                 end
@@ -81,6 +88,10 @@ classdef compUnit
                     i.compute();
                 end
             end
+        end
+        
+        function v = calc(this, time, order)
+            v = this.adder(1).calc(time - this.t, order);
         end
         
     end
