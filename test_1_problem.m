@@ -27,13 +27,10 @@ classdef test_1_problem < AbstractProblem
             unit.b = Poly(order, lastComp.b.calc(initTime - lastComp.t, 0));
         end
         
-        function repeatCompute(t, order)
-            for k = 1 : order
-                t.o = k;
-                
-                t.addIntegTo(t.a, t.get(t.b) * 1);
-                t.addIntegTo(t.b, t.get(t.a) * -1);
-            end
+        
+        function computeOneItr(t)
+            t.addIntegTo(t.a, t.get(t.b) * 1);
+            t.addIntegTo(t.b, t.get(t.a) * -1);
         end
         
         function v = mainVariable(this)
