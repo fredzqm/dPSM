@@ -7,10 +7,10 @@ config.order = 4;
 % problem = DefaultProblem({0 1} , 0 , 1 , ...
 %     [rel( 1 , 1 , 0 , 2 ) rel( 2 , -1, 0 , 1 ) ]);
 problem = test_1_problem();
-s = simulator( problem , config );
+s = simulator( problem );
 
 %% compute
-s.compute(20);
+s.compute(20 / 0.001);
 
 %% display
 figure(1)

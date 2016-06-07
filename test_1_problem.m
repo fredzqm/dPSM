@@ -7,22 +7,25 @@ classdef test_1_problem < AbstractProblem
     end
     
     methods
-        
-        function unit = createFirstCompUnit(this, simulator)
-            order = simulator.minOrder;
-            unit = test_1_problem;
-            unit.t = 0;
-            unit.a = Poly(order, 0);
-            unit.b = Poly(order, 1);
+        function u = test_1_problem(o, t, a, b)
+            if nargin > 0
+                u.o = o;
+                u.t = t;
+                u.a = a;
+                u.b = b;
+                return;
+            end
+            u.o = 4;
+            u.t = -0.001;
+            u.a = Poly(u.o, 0);
+            u.b = Poly(u.o, 1);
         end
         
-        function unit = createCompUnit(this, simulator, initTime)
-            unit = test_1_problem;
-            order = simulator.minOrder;
-            unit.t = initTime;
-            lastComp = simulator.f(end);
-            unit.a = Poly(order, lastComp.a.calc(initTime - lastComp.t, 0));
-            unit.b = Poly(order, lastComp.b.calc(initTime - lastComp.t, 0));
+        function unit = createCompUnit(last, simulator)
+            segLen = 0.001;
+            a = Poly(last.o, last.a.calc(segLen, 0));
+            b = Poly(last.o, last.b.calc(segLen, 0));
+            unit = test_1_problem(last.o, last.t + segLen, a , b);
         end
         
         

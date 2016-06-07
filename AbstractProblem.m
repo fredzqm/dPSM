@@ -5,15 +5,15 @@ classdef AbstractProblem < handle
     end
     
     methods (Abstract)
-        unit = createFirstCompUnit(this, simulator)
-        unit = createCompUnit(this, simulator, initTime)
+        unit = createCompUnit(this, simulator)
         
         computeOneItr(unit)
         v = mainVariable(this)
     end
     
     methods
-        function repeatCompute(t, order)
+        function compute(t)
+            order = t.o;
             for k = 1 : order
                 t.o = k;
                 t.computeOneItr();
