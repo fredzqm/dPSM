@@ -5,6 +5,9 @@ classdef Poly < handle
     
     methods
         function this = Poly(order, init)
+            if nargin == 0
+                return;
+            end
             this.c = zeros(1, order);
             if nargin >= 2
                 this.c(1) = init;

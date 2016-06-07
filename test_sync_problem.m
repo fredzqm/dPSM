@@ -2,27 +2,34 @@
 %     [rel(1,1/2, 0, [1 3]) rel(1,-2, 1, 2) ...
 %     rel(2,1/2, 0, [2 3]) rel(2, 2, 1, 1) ...
 %         rel(3, -1, 0, [3 3]) ]);
-classdef test_3_problem < AbstractProblem
+classdef test_sync_problem < AbstractProblem
     properties
-        a
-        b
-        c
+        w1
+        w2
+        v1
+        u1
+        v2
+        u2
+        th1
+        th2
     end
     
     methods
-        
         function unit = createFirstCompUnit(this, simulator)
-            unit = test_3_problem;
+            unit = test_sync_problem;
             order = simulator.minOrder;
             unit.t = 0;
-            unit.a = Poly(order, 1);
-            unit.b = Poly(order, 0);
-            unit.c = Poly(order, 1);
+            unit.th1 = Poly(order, 1);
+            unit.th2 = Poly(order, 0);
+            unit.u1 = Poly(order, 1);
+            unit.u2 = Poly(order, 1);
+            unit.v1 = Poly(order, 1);
+            unit.v2 = Poly(order, 1);
         end
         
         function unit = createCompUnit(this, simulator, initTime)
+            unit = test_sync_problem;
             order = simulator.minOrder;
-            unit = test_3_problem;
             unit.t = initTime;
             lastComp = simulator.f(end);
             unit.a = Poly(order, lastComp.a.calc(initTime - lastComp.t, 0));

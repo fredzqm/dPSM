@@ -2,8 +2,6 @@
 %     [rel( 1 , 1 , 0 , 2 ) rel( 2 , -1, 0 , 1 ) ]);
 classdef test_1_problem < AbstractProblem
     properties
-        t
-        o
         a
         b
     end
@@ -19,8 +17,8 @@ classdef test_1_problem < AbstractProblem
         end
         
         function unit = createCompUnit(this, simulator, initTime)
-            order = simulator.minOrder;
             unit = test_1_problem;
+            order = simulator.minOrder;
             unit.t = initTime;
             lastComp = simulator.f(end);
             unit.a = Poly(order, lastComp.a.calc(initTime - lastComp.t, 0));

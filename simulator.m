@@ -5,12 +5,7 @@ classdef simulator < handle
         
         % represent the computational units in this simulator
         problem;
-        
-        % initial values
-%         initTime
-%         initValue  % A cell array of initValues (Can be polynomials)
-%         delay
-        
+                
         % configuration for computing
         resetTime = 0.05; % resetTime*delaySeg is one delay time.
         minOrder = 5    ; % default minOrder

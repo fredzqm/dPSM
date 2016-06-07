@@ -1,5 +1,5 @@
 classdef AbstractProblem < handle
-    properties (Abstract)
+    properties
         t
         o
     end

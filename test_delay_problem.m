@@ -1,8 +1,6 @@
 % problem = DefaultProblem({1}, 0 , 1, rel(1,1, 0, 1 , 1) );
 classdef test_delay_problem < AbstractProblem
     properties
-        t
-        o
         a
         d
     end
