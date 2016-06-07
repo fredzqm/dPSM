@@ -6,26 +6,26 @@ classdef test_delay_problem < AbstractProblem
     end
     
     methods
-        
-        function unit = createFirstCompUnit(this, simulator)
-            order = simulator.minOrder;
-            unit = test_delay_problem;
-            unit.t = 0;
-            unit.a = Poly(order, 1);
-            unit.d = Poly(order, 1);
+        function u = test_delay_problem(o, t, a, d)
+            if nargin > 0
+                u.o = o;
+                u.t = t;
+                u.a = a;
+                u.d = d;
+                return;
+            end
+            u.o = 10;
+            u.t = -1;
+            u.a = Poly(u.o, 1);
+            u.d = Poly(u.o, 1);
         end
         
-        function unit = createCompUnit(this, simulator, initTime)
-            order = simulator.minOrder;
-            unit = test_delay_problem;
-            unit.t = initTime;
-            lastComp = simulator.f(end);
-            unit.a = Poly(order, lastComp.a.calc(initTime - lastComp.t, 0));
-            dcomp = simulator.findComp(initTime - 1);
-            unit.d = Poly(0);
-            unit.d.c = dcomp.a.c * expandTransMat(order, initTime - 1 - dcomp.t);
+        function unit = createCompUnit(last, simulator)
+            segLen = 1;
+            a = Poly(last.o, last.a.calc(segLen, 0));
+            d = last.a;
+            unit = test_delay_problem(last.o, last.t + segLen, a , d);
         end
-        
         
         function computeOneItr(t)
             t.addIntegTo(t.a, t.multiple(t.a, t.d));

@@ -5,7 +5,7 @@ classdef simulator < handle
         problem;
         f;
     end
-
+    
     methods
         % take three terms -- funct (the function of comps)
         %                  -- initTime (the time to start compute)
@@ -93,7 +93,7 @@ classdef simulator < handle
                 end
                 j = i + 1;
                 while j <= tLen && tt(j) < this.f(index + 1).t
-                    j = j + 1;s
+                    j = j + 1;
                 end
                 vv(i:j-1) = this.f(index).calc(tt(i:j-1), order);
                 index = index + 1;

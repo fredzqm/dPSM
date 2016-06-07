@@ -27,6 +27,10 @@ classdef Poly < handle
                     v = v + poly.c(i);
                 end
             else
+                if order > size(poly.c, 2)
+                    v = 0;
+                    return;
+                end
                 c2 = poly.c .* factorial(0:size(poly.c, 2)-1);
                 if t == 0
                     v = c2(1+order);
