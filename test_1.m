@@ -8,13 +8,13 @@ problem = test_1_problem();
 s = simulator( problem );
 
 %% compute
-s.compute(20 / 0.001);
+til = s.compute(20 / 0.001);
 
 %% display
 figure(1)
 hold off
 answer = @(x) sin(x);
-t = 0 :0.01: 10 ;
+t = 0 :0.01: 2 ;
 s.plot( t , answer );
 s.plotDeriv( t , 1);
 

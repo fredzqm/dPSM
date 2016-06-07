@@ -16,7 +16,7 @@ classdef simulator < handle
               
           
         % compute a certain time given the resetTime and minorder 
-        function compute(this , numSeg)
+        function til = compute(this , numSeg)
             this.f = this.problem.createCompUnit(this);
             this.f(end).compute();
             status = 0;
@@ -31,6 +31,7 @@ classdef simulator < handle
                 end
             end
             fprintf('Finish computing\n');
+            til = this.f(end).t;
         end
         
         function [comp, isInitComp] = lastComp(this, numBack)
@@ -106,8 +107,12 @@ classdef simulator < handle
         
         % plot the function and make comparasion
         function plot(this , tt , compare)
-            tts = min(tt): (max(tt)-min(tt))/70 : max(tt);
-            plot( tt , this.calc(tt, 0) , '-'  , tts , compare(tts) , '.');             
+            if nargin >= 3
+                tts = min(tt): (max(tt)-min(tt))/70 : max(tt);
+                plot( tt , this.calc(tt, 0) , '-'  , tts , compare(tts) , '.');
+            else
+                plot( tt , this.calc(tt, 0) , '-');
+            end
         end
         
         % plot the comparative error

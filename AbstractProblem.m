@@ -30,8 +30,20 @@ classdef AbstractProblem < handle
             dest.c(t.o+1) = value / t.o;
         end
         
+        function addTo(t, dest, value)
+            dest.c(t.o) = value;
+        end
+        
         function v = get(t, src)
             v = src.c(t.o);
+        end
+        
+        function v = const(t, con)
+            if t.o < size(con, 2)
+                v = con(t.o);
+            else
+                v = 0;
+            end
         end
         
         function v = multiple(t, a, b)

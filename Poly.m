@@ -10,7 +10,8 @@ classdef Poly < handle
             end
             this.c = zeros(1, order);
             if nargin >= 2
-                this.c(1) = init;
+                s = size(init, 2);
+                this.c(1:s) = init;
             end
         end
         
@@ -43,7 +44,14 @@ classdef Poly < handle
                     v = v + c2(i);
                 end
             end
-         end
+        end
+         
+        function npoly = deriv(poly)
+            npoly = Poly();
+            len = size(poly.c, 2);
+            npoly.c = poly.c(2:end) ./ (1:len-1);
+            npoly.c(end+1) = 0;
+        end
     end
     
 end
