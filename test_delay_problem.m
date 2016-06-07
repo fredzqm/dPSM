@@ -6,25 +6,22 @@ classdef test_delay_problem < AbstractProblem
     end
     
     methods
-        function u = test_delay_problem(o, t, a, d)
-            if nargin > 0
-                u.o = o;
-                u.t = t;
-                u.a = a;
-                u.d = d;
-                return;
-            end
+        function u = test_delay_problem(last, simulator)
             u.o = 10;
-            u.t = -1;
-            u.a = Poly(u.o, 1);
-            u.d = Poly(u.o, 1);
+            if nargin == 0
+                u.t = -1;
+                u.a = Poly(u.o, 1);
+                u.d = Poly(u.o, 1);
+            else
+                segLen = 1;
+                u.t = simulator.len();
+                u.a = Poly(last.o, last.a.calc(segLen, 0));
+                u.d = last.a;
+            end
         end
         
         function unit = createCompUnit(last, simulator)
-            segLen = 1;
-            a = Poly(last.o, last.a.calc(segLen, 0));
-            d = last.a;
-            unit = test_delay_problem(last.o, last.t + segLen, a , d);
+            unit = test_delay_problem(last, simulator);
         end
         
         function computeOneItr(t)

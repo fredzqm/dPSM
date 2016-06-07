@@ -7,27 +7,23 @@ classdef test_1_problem < AbstractProblem
     end
     
     methods
-        function u = test_1_problem(o, t, a, b)
-            if nargin > 0
-                u.o = o;
-                u.t = t;
-                u.a = a;
-                u.b = b;
-                return;
-            end
+        function u = test_1_problem(last, simulator)
             u.o = 4;
-            u.t = -0.001;
-            u.a = Poly(u.o, 0);
-            u.b = Poly(u.o, 1);
+            if nargin == 0
+                u.t = 0;
+                u.a = Poly(u.o, 0);
+                u.b = Poly(u.o, 1);
+            else
+                segLen = 0.001;
+                u.t = segLen * simulator.len();
+                u.a = Poly(last.o, last.a.calc(segLen, 0));
+                u.b = Poly(last.o, last.b.calc(segLen, 0));
+            end
         end
         
         function unit = createCompUnit(last, simulator)
-            segLen = 0.001;
-            a = Poly(last.o, last.a.calc(segLen, 0));
-            b = Poly(last.o, last.b.calc(segLen, 0));
-            unit = test_1_problem(last.o, last.t + segLen, a , b);
+            unit = test_1_problem(last, simulator);
         end
-        
         
         function computeOneItr(t)
             t.addIntegTo(t.a, t.get(t.b) * 1);

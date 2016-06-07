@@ -43,7 +43,9 @@ classdef simulator < handle
             end
         end
         
-                
+        function l = len(this)
+            l = size(this.f, 2);
+        end
         % note that tt should be a time array in ascending order
         function vv = calc(this, tt, order)
             if size(tt, 2) == 0
