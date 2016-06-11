@@ -14,9 +14,9 @@ classdef test_circuit_problem < AbstractProblem
     methods
         function u = test_circuit_problem(last, simulator)
             if nargin == 0
-                u.o = 20;
+                u.o = 10;
                 u.t = 0;
-                order = 0:20;
+                order = 0:u.o;
                 x = real(1i .^ (order) ./ factorial(order));
                 u.y(1, 1) = Poly(u.o, x);
                 u.y(2, 1) = Poly(u.o, x .* 2 .^ order);
@@ -25,7 +25,7 @@ classdef test_circuit_problem < AbstractProblem
                 u.ydd = u.yd.deriv();
             else
                 segLen = 1;
-                u.o = 100 - simulator.len();
+                u.o = 10;
                 u.t = segLen * simulator.len();
                 u.y = Poly(u.o, last.y.calc(segLen, 0));
                 u.yd = last.y;
@@ -43,14 +43,11 @@ classdef test_circuit_problem < AbstractProblem
             L = [-7 1 2; 3 -9 0; 1 2 -6] * 100;
             M = [1 0 -3; -0.5 -0.5 -1; -0.5 -1.5 0] * 100;
             N = [-1 5 2; 4 0 3; -2 4 1] /  72;
-            t.addIntegTo(t.y, L * t.get(t.y) + M * t.get(t.dy) + N * t.get(t.ddy)); 
-%             t.addIntegTo(t.a, 1/2*t.multiple(t.a, t.c) - 2*t.multiplePoly(t.b, [0 1]));
-%             t.addIntegTo(t.b, 1/2*t.multiple(t.b, t.c) + 2*t.multiplePoly(t.a, [0 1]));
-%             t.addIntegTo(t.c, - t.multiple(t.c,t.c));
+            t.addIntegTo(t.y, L * t.get(t.y) + M * t.get(t.yd) + N * t.get(t.ydd));
         end
         
         function v = mainVariable(this)
-            v = this.a;
+            v = this.y(1);
         end
         
         function unit = createCompUnit(last, simulator)

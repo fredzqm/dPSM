@@ -19,7 +19,7 @@ t = 0 :0.01: 10;
 s.plot( t , answer );
 
 figure(2)
-s.plotDeriv( t , 6);
+s.plotDeriv(t , 1);
 
 %% plot error
 figure(3)

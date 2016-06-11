@@ -27,7 +27,9 @@ classdef AbstractProblem < handle
         
         
         function addIntegTo(t, dest, value)
-            dest.c(:, t.o+1) = value / t.o;
+            for i = 1 : size(value, 1)
+                dest(i).c(1, t.o+1) = value(i) / t.o;
+            end
         end
         
         function addTo(t, dest, value)
@@ -35,7 +37,8 @@ classdef AbstractProblem < handle
         end
         
         function v = get(t, src)
-            v = [src.c(t.o)]';
+            mat = Poly.toMatrix(src);
+            v = mat(:,t.o);
         end
         
         function v = const(t, con)

@@ -9,11 +9,15 @@ classdef Poly < handle
                 return;
             end
             if nargin >= 2
-                s = size(init, 2);
+                s = size(init);
                 if order > s
-                    this.c = [init zeros(1, order-s)];
+                    for i = 1 : s(1)
+                        this(i, 1).c = [init(i) zeros(1, order-s(2))];
+                    end
                 else
-                    this.c = init(1:order);
+                    for i = 1 : s(1)
+                        this(i, 1).c = init(i, 1:order);
+                    end
                 end
             end
         end
@@ -110,8 +114,8 @@ classdef Poly < handle
     end
     methods (Static)
         function mat = toMatrix(poly)
-            mat(size(poly,1), :) = poly(end).c;
-            for i = 1 : size(poly, 1) -1
+            mat(size(poly,1), size(poly(1).c, 2)) = 0;
+            for i = 1 : size(poly, 1)
                 mat(i, :) = poly(i).c;
             end
         end
