@@ -6,7 +6,7 @@ problem = test_delay_problem;
 s = simulator( problem );
 
 %% compute
-until = s.compute(3)
+s.compute(3);
 
 %% plot taylor
 figure(1)

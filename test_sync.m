@@ -4,7 +4,7 @@ problem = test_sync_problem;
 s = simulator(problem);
 
 %% compute
-til = s.compute(20000)
+s.compute(10);
 
 %% plot taylor
 figure(1)

@@ -16,7 +16,7 @@ classdef simulator < handle
               
           
         % compute a certain time given the resetTime and minorder 
-        function [til, numSeg] = compute(this , time)
+        function compute(this , time)
             this.f = this.problem.createCompUnit(this);
             this.f(end).compute();
             startTime = this.problem.t;
@@ -27,13 +27,14 @@ classdef simulator < handle
                 unit = this.f(end).createCompUnit(this);
                 unit.compute();
                 this.f(end+1) = unit;
-                til = this.f(end).t;
-                if (til-startTime)/(time-startTime) - status > 0.01
-                    status = (til-startTime)/(time-startTime);
-                    fprintf('Computing ... %2d %%\n', uint8(status*100));
+                til = unit.t;
+                curStatus = (til-startTime)/(time-startTime);
+                if curStatus - status > 0.01
+                    status = curStatus;
+                    fprintf('Computing ... %2d %%\n', uint8(curStatus*100));
                 end
             end
-            numSeg = size(this.f, 2);
+            fprintf('Computed %d segments in total, up to %d\n', size(this.f, 2), til);
             fprintf('Finish computing\n');
         end
         

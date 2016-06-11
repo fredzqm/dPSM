@@ -57,7 +57,7 @@ classdef AbstractProblem < handle
         
         function v = multiplePoly(t, a, p)
             len = min(size(p, 2), t.o) - 1;
-            p = p * expandTransMat(size(p, 2), t.t);
+            p = delay(p, t.t);
             p = fliplr(p);
             v = sum( a(t.o-len:t.o) .* p(end-len:end) );
         end
