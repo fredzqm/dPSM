@@ -14,9 +14,11 @@ til = s.compute(20 / 0.001);
 figure(1)
 hold off
 answer = @(x) sin(x);
-t = 0 :0.01: 2 ;
+t = 0 :0.01: 10 ;
 s.plot( t , answer );
 s.plotDeriv( t , 1);
+s.plotDeriv( t , 2);
+s.plotDeriv( t , 3);
 
 %% plot error
 figure(3)

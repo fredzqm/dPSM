@@ -3,10 +3,10 @@ function x = expandTransMat(n, d)
         x = 1;
         return;
     end
-    x = pascal(n);
-    x(x>=n) = 0;
-    x = diag(d .^ (0:n-1)) * x;
-    x = [x; zeros(1, n)];
-    x = reshape(x , n , n+1);
-    x = x(:, 1:n);
+    x = diag(ones(1, n));
+    x(:, 1) = 1;
+    for i = 2 : n
+        x(i, 1) = x(i-1, 1) * d;
+        x(i, 2:i-1) = x(i-1, 1:i-2) + x(i-1, 2:i-1) * d;
+    end
 end

@@ -27,22 +27,22 @@ classdef AbstractProblem < handle
         
         
         function addIntegTo(t, dest, value)
-            dest.c(t.o+1) = value / t.o;
+            dest.c(:, t.o+1) = value / t.o;
         end
         
         function addTo(t, dest, value)
-            dest.c(t.o) = value;
+            dest.c(:, t.o) = value;
         end
         
         function v = get(t, src)
-            v = src.c(t.o);
+            v = [src.c(t.o)]';
         end
         
         function v = const(t, con)
             if t.o < size(con, 2)
-                v = con(t.o);
+                v = con(:, t.o);
             else
-                v = 0;
+                v = zeros(size(con, 2), 1);
             end
         end
         
