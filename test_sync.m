@@ -1,7 +1,7 @@
  %% initialize sqrt(x+1)*cos(x^2)
 % clear;
 problem = test_sync_problem;
-s = simulator(problem );
+s = simulator(problem);
 
 %% compute
 til = s.compute(20000)

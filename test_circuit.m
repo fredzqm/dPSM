@@ -7,6 +7,6 @@ until = s.compute(2000)
 %% plot taylor
 figure(1)
 hold off
-t = -0.2 :0.0001: 2;
+t = -0.2 :0.0001: 0.1;
 s.plot( t );
 

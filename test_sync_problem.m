@@ -59,22 +59,6 @@ classdef test_sync_problem < AbstractProblem
             t.v(2,t.o+1) = -t.multiple(t.u(2, :), t.th1_w1) / t.o;
             t.v(3,t.o+1) = -t.multiple(t.u(3, :), t.th2_w2) / t.o;
             t.v(4,t.o+1) = -t.multiple(t.u(4, :), t.th1_w2) / t.o;
-%             w1 = (t.get(t.v(1)) + t.get(t.v(2)))/2 + t.const(1);
-%             w2 = (t.get(t.v(3)) + t.get(t.v(4)))/2 + t.const(1);
-%             t.addTo( t.th1_w1 , t.get(t.thd(1)) - w1);
-%             t.addTo( t.th1_w2 , t.get(t.thd(1)) - w2);
-%             t.addTo( t.th2_w1 , t.get(t.thd(2)) - w1);
-%             t.addTo( t.th2_w2 , t.get(t.thd(2)) - w2);
-%             t.addIntegTo(t.th(1), w1);
-%             t.addIntegTo(t.th(2), w2);
-%             t.addIntegTo(t.u(1), t.multiple(t.v(1), t.th2_w1));
-%             t.addIntegTo(t.v(1), -t.multiple(t.u(1), t.th2_w1));
-%             t.addIntegTo(t.u(2), t.multiple(t.v(2), t.th1_w1));
-%             t.addIntegTo(t.v(2), -t.multiple(t.u(2), t.th1_w1));
-%             t.addIntegTo(t.u(3), t.multiple(t.v(3), t.th2_w2));
-%             t.addIntegTo(t.v(3), -t.multiple(t.u(3), t.th2_w2));
-%             t.addIntegTo(t.u(4), t.multiple(t.v(4), t.th1_w2));
-%             t.addIntegTo(t.v(4), -t.multiple(t.u(4), t.th1_w2));
         end
         
         function v = mainVariable(this)

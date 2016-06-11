@@ -27,8 +27,8 @@ classdef test_1_problem < AbstractProblem
         end
         
         function computeOneItr(t)
-            t.a(:, t.o+1) = t.b(:, t.o)/t.o;
-            t.b(:, t.o+1) = -t.a(:, t.o)/t.o;
+            t.a(:, t.o+1) = t.b(:, t.o) / t.o;
+            t.b(:, t.o+1) = -t.a(:, t.o) / t.o;
         end
         
         function v = mainVariable(this)
