@@ -35,12 +35,12 @@ classdef simulator < handle
         end
         
         function [comp, isInitComp] = lastComp(this, numBack)
-            if size(this.f, 2) > numBack + 1
-                comp = this.f(end - numBack);
+            if size(this.f, 2) > numBack
+                comp = this.f(end - numBack + 1);
                 isInitComp = 0;
             else
                 comp = this.problem;
-                isInitComp = 0;
+                isInitComp = 1;
             end
         end
         
@@ -58,7 +58,10 @@ classdef simulator < handle
             end
             vv = zeros(size(tt));
             i = 1;
-            if tt(1) <= this.f(1).t
+            if size(this.f, 2) == 0
+                vv = this.problem.calc(tt, order);
+                return;
+            elseif tt(1) <= this.f(1).t
                 if tt(end) < this.f(1).t
                     vv = this.problem.calc(tt, order);
                     return;
@@ -66,7 +69,7 @@ classdef simulator < handle
                 while tt(i) < this.f(1).t
                     i = i + 1;
                 end
-                vv(1:i-1) = this.f(1).calc(tt(1:i-1), order);
+                vv(1:i-1) = this.problem.calc(tt(1:i-1), order);
                 index = 1;
             elseif tt(1) >= this.f(end).t
                 vv = this.f(end).calc(tt, order);

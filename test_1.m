@@ -8,7 +8,7 @@ problem = test_1_problem();
 s = simulator( problem );
 
 %% compute
-til = s.compute(20 / 0.001);
+until = s.compute(20 / 0.001)
 
 %% display
 figure(1)

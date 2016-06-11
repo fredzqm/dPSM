@@ -12,7 +12,7 @@ classdef Poly < handle
                 s = size(init);
                 if order > s
                     for i = 1 : s(1)
-                        this(i, 1).c = [init(i) zeros(1, order-s(2))];
+                        this(i, 1).c = [init(i, :) zeros(1, order-s(2))];
                     end
                 else
                     for i = 1 : s(1)
@@ -83,7 +83,7 @@ classdef Poly < handle
         function npoly = deriv(poly)
             mat = Poly.toMatrix(poly);
             s = size(mat);
-            mat = mat(:, 2:end) * diag(1./(1:s(2)-1));
+            mat = mat(:, 2:end) * diag(1:s(2)-1);
             npoly = Poly.toPoly([mat zeros(s(1), 1)]);
 %             if size(poly, 1) == 1
 %                 npoly = Poly();

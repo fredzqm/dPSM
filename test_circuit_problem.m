@@ -8,28 +8,34 @@ classdef test_circuit_problem < AbstractProblem
         yd
         ydd
     end
-    properties (Constant)
-        tau = 1
-    end
     methods
         function u = test_circuit_problem(last, simulator)
+            segLen = 0.004;
+            delay = 1;
+            u.o = 10;
+            delaySeg = delay / segLen;
             if nargin == 0
-                u.o = 10;
                 u.t = 0;
                 order = 0:u.o;
-                x = real(1i .^ (order) ./ factorial(order));
+                x = mod(order, 2) .* ((-1).^(mod(order,4)==3)) ./ factorial(order);
                 u.y(1, 1) = Poly(u.o, x);
                 u.y(2, 1) = Poly(u.o, x .* 2 .^ order);
                 u.y(3, 1) = Poly(u.o, x .* 3 .^ order);
-                u.yd = u.y.delay(test_circuit_problem.tau);
+            elseif simulator.len() == 0
+                u.t = segLen * simulator.len();
+                u.y = Poly(u.o, last.y.calc(0, 0));
+                u.yd = last.y.delay(segLen);
                 u.ydd = u.yd.deriv();
             else
-                segLen = 1;
-                u.o = 10;
                 u.t = segLen * simulator.len();
                 u.y = Poly(u.o, last.y.calc(segLen, 0));
-                u.yd = last.y;
-                u.ydd = last.y.deriv();
+                [delayToComp, isInitComp] = simulator.lastComp(delaySeg);
+                if isInitComp
+                    u.yd = delayToComp.y.delay((delaySeg - simulator.len())*segLen);
+                else
+                    u.yd = delayToComp.y;
+                end
+                u.ydd = u.yd.deriv();
             end
         end
         
@@ -40,10 +46,14 @@ classdef test_circuit_problem < AbstractProblem
         %      rel(2,1/2, 0, [2 3]) rel(2, 2, 1, 1) ...
         %         rel(3, -1, 0, [3 3]) ]);
         function computeOneItr(t)
-            L = [-7 1 2; 3 -9 0; 1 2 -6] * 100;
-            M = [1 0 -3; -0.5 -0.5 -1; -0.5 -1.5 0] * 100;
+            L = [-7 1 2; 3 -9 0; 1 2 -6];
+            M = [1 0 -3; -0.5 -0.5 -1; -0.5 -1.5 0];
             N = [-1 5 2; 4 0 3; -2 4 1] /  72;
-            t.addIntegTo(t.y, L * t.get(t.y) + M * t.get(t.yd) + N * t.get(t.ydd));
+            a = L * t.get(t.y);
+            b = M * t.get(t.yd);
+            c = N * t.get(t.ydd);
+            r = a + b + c;
+            t.addIntegTo(t.y, r);
         end
         
         function v = mainVariable(this)

@@ -9,7 +9,7 @@ problem = test_3_problem;
 s = simulator(problem);
 
 %% compute
-s.compute(20/0.001);
+until = s.compute(20/0.001)
 
 %% plot taylor
 figure(1)
