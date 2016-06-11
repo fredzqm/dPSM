@@ -20,9 +20,9 @@ classdef test_3_problem < AbstractProblem
             else
                 segLen = 0.001;
                 u.t = segLen * simulator.len();
-                u.a = Poly(u.o, last.a.calc(segLen, 0));
-                u.b = Poly(u.o, last.b.calc(segLen, 0));
-                u.c = Poly(u.o, last.c.calc(segLen, 0));
+                u.a = Poly(u.o, calc(last.a, segLen, 0));
+                u.b = Poly(u.o, calc(last.b, segLen, 0));
+                u.c = Poly(u.o, calc(last.c, segLen, 0));
             end
         end
         
@@ -35,9 +35,9 @@ classdef test_3_problem < AbstractProblem
         %      rel(2,1/2, 0, [2 3]) rel(2, 2, 1, 1) ...
         %         rel(3, -1, 0, [3 3]) ]);
         function computeOneItr(t)
-            t.addIntegTo(t.a, 1/2*t.multiple(t.a, t.c) - 2*t.multiplePoly(t.b, [0 1]));
-            t.addIntegTo(t.b, 1/2*t.multiple(t.b, t.c) + 2*t.multiplePoly(t.a, [0 1]));
-            t.addIntegTo(t.c, - t.multiple(t.c,t.c));
+            t.a(:, t.o+1) = (1/2*t.multiple(t.a, t.c) - 2*t.multiplePoly(t.b, [0 1])) / t.o;
+            t.b(:, t.o+1) = (1/2*t.multiple(t.b, t.c) + 2*t.multiplePoly(t.a, [0 1])) / t.o;
+            t.c(:, t.o+1) = - t.multiple(t.c,t.c) / t.o;
         end
         
         function v = mainVariable(this)

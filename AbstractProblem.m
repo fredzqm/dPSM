@@ -50,8 +50,8 @@ classdef AbstractProblem < handle
         end
         
         function v = multiple(t, a, b)
-            x = a.c(1:t.o);
-            y = fliplr(b.c(1:t.o));
+            x = a(1:t.o);
+            y = fliplr(b(1:t.o));
             v = sum(x .* y);
         end
         
@@ -59,7 +59,7 @@ classdef AbstractProblem < handle
             len = min(size(p, 2), t.o) - 1;
             p = p * expandTransMat(size(p, 2), t.t);
             p = fliplr(p);
-            v = sum( a.c(t.o-len:t.o) .* p(end-len:end) );
+            v = sum( a(t.o-len:t.o) .* p(end-len:end) );
         end
         
     end

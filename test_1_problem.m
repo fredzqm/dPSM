@@ -29,8 +29,6 @@ classdef test_1_problem < AbstractProblem
         function computeOneItr(t)
             t.a(:, t.o+1) = t.b(:, t.o)/t.o;
             t.b(:, t.o+1) = -t.a(:, t.o)/t.o;
-%             t.addIntegTo(t.a, t.get(t.b) * 1);
-%             t.addIntegTo(t.b, t.get(t.a) * -1);
         end
         
         function v = mainVariable(this)
