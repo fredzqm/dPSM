@@ -15,7 +15,7 @@ classdef test_delay_problem < AbstractProblem
             else
                 segLen = 1;
                 u.t = simulator.len();
-                u.a = Poly(last.o, last.a.calc(segLen, 0));
+                u.a = Poly(u.o, calc(last.a, segLen, 0));
                 u.d = last.a;
             end
         end
@@ -25,7 +25,7 @@ classdef test_delay_problem < AbstractProblem
         end
         
         function computeOneItr(t)
-            t.addIntegTo(t.a, t.multiple(t.a, t.d));
+            t.a(:, t.o+1) = t.multiple(t.a, t.d) / t.o;
         end
         
         function v = mainVariable(this)
