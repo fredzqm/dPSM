@@ -9,13 +9,13 @@ problem = test_3_problem;
 s = simulator(problem);
 
 %% compute
-until = s.compute(20/0.001)
+until = s.compute(20)
 
 %% plot taylor
 figure(1)
 hold off
 answer = @(x) sqrt(x+1).*cos(x.^2);
-t = 0 :0.01: 10;
+t = linspace(0, 10, 1000);
 s.plot( t , answer );
 
 figure(2)

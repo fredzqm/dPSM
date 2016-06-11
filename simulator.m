@@ -16,27 +16,31 @@ classdef simulator < handle
               
           
         % compute a certain time given the resetTime and minorder 
-        function til = compute(this , numSeg)
+        function [til, numSeg] = compute(this , time)
             this.f = this.problem.createCompUnit(this);
             this.f(end).compute();
+            startTime = this.problem.t;
+            til = startTime;
             status = 0;
             fprintf('Start computing\n');
-            for x = 1 : numSeg
+            while til < time
                 unit = this.f(end).createCompUnit(this);
                 unit.compute();
                 this.f(end+1) = unit;
-                if x/numSeg - status > 0.01
-                    status = x/numSeg;
+                til = this.f(end).t;
+                if (til-startTime)/(time-startTime) - status > 0.01
+                    status = (til-startTime)/(time-startTime);
                     fprintf('Computing ... %2d %%\n', uint8(status*100));
                 end
             end
+            numSeg = size(this.f, 2);
             fprintf('Finish computing\n');
-            til = this.f(end).t;
         end
         
         function [comp, isInitComp] = lastComp(this, numBack)
+            numBack = int16(numBack - 1);
             if size(this.f, 2) > numBack
-                comp = this.f(end - numBack + 1);
+                comp = this.f(end - numBack);
                 isInitComp = 0;
             else
                 comp = this.problem;
@@ -47,6 +51,7 @@ classdef simulator < handle
         function l = len(this)
             l = size(this.f, 2);
         end
+        
         % note that tt should be a time array in ascending order
         function vv = calc(this, tt, order)
             if size(tt, 2) == 0
@@ -125,8 +130,7 @@ classdef simulator < handle
                
         % plot the derivative
         function plotDeriv(this , tt , order)
-            hold on
-            plot( tt , this.calc(tt, order) , 'y');  
+            plot( tt , this.calc(tt, order) , 'ro');  
         end
 
     end

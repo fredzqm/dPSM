@@ -12,6 +12,6 @@ until = s.compute(3)
 figure(1)
 hold off
 answer = @(x) exp(x);
-t = 0 :0.01: 1.5;
+t = linspace(0, 1.5, 1000);
 s.plot( t , answer );
 

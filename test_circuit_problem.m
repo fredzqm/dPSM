@@ -10,7 +10,7 @@ classdef test_circuit_problem < AbstractProblem
     end
     methods
         function u = test_circuit_problem(last, simulator)
-            segLen = 0.004;
+            segLen = 0.00004;
             u.o = 10;
             delaySeg = 1 / segLen;
             if nargin == 0
@@ -43,8 +43,8 @@ classdef test_circuit_problem < AbstractProblem
         %      rel(2,1/2, 0, [2 3]) rel(2, 2, 1, 1) ...
         %         rel(3, -1, 0, [3 3]) ]);
         function computeOneItr(t)
-            L = [-7 1 2; 3 -9 0; 1 2 -6];
-            M = [1 0 -3; -0.5 -0.5 -1; -0.5 -1.5 0];
+            L = [-7 1 2; 3 -9 0; 1 2 -6] * 100;
+            M = [1 0 -3; -0.5 -0.5 -1; -0.5 -1.5 0] * 100;
             N = [-1 5 2; 4 0 3; -2 4 1] /  72;
             a = L * t.y(:, t.o);
             b = M * t.yd(:, t.o);
@@ -54,7 +54,7 @@ classdef test_circuit_problem < AbstractProblem
         end
         
         function v = mainVariable(this)
-            v = this.y(1);
+            v = this.y(1, :);
         end
         
         function unit = createCompUnit(last, simulator)
