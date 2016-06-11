@@ -22,24 +22,24 @@ classdef AbstractProblem < handle
                 
         function v = calc(this, t, order)
             poly = this.mainVariable();
-            v = poly.calc(t - this.t, order);
+            v = calc(poly, t - this.t, order);
         end
         
         
-        function addIntegTo(t, dest, value)
-            for i = 1 : size(value, 1)
-                dest(i).c(1, t.o+1) = value(i) / t.o;
-            end
-        end
+%         function addIntegTo(t, dest, value)
+%             for i = 1 : size(value, 1)
+%                 dest(i).c(1, t.o+1) = value(i) / t.o;
+%             end
+%         end
         
         function addTo(t, dest, value)
             dest.c(:, t.o) = value;
         end
         
-        function v = get(t, src)
-            mat = Poly.toMatrix(src);
-            v = mat(:,t.o);
-        end
+%         function v = get(t, src)
+%             mat = Poly.toMatrix(src);
+%             v = mat(:,t.o);
+%         end
         
         function v = const(t, con)
             if t.o < size(con, 2)
