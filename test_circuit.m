@@ -2,6 +2,7 @@ problem = test_circuit_problem;
 s = simulator(problem);
 
 %% compute
+[til , numSeg] = s.compute(8)
 
 %% plot taylor
 figure(1)

@@ -10,7 +10,7 @@ classdef test_circuit_problem < AbstractProblem
     end
     methods
         function u = test_circuit_problem(last, simulator)
-            segLen = 0.00004;
+            segLen = 0.0001;
             u.o = 10;
             delaySeg = 1 / segLen;
             if nargin == 0
