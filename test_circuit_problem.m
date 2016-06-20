@@ -8,14 +8,21 @@ classdef test_circuit_problem < AbstractProblem
         yd
         ydd
     end
+    
+    properties (Constant)
+        seglen = 1/100;
+        initOrder = 100;
+        intOrder = 30
+    end
+    
     methods
         function u = test_circuit_problem(last, simulator)
-            segLen = 0.0001;
-            u.o = 10;
+            segLen = test_circuit_problem.segLen;
+            u.o = test_circuit_problem.intOrder;
             delaySeg = 1 / segLen;
             if nargin == 0
                 u.t = 0;
-                order = 0:u.o;
+                order = 0:test_circuit_problem.initOrder;
                 x = mod(order, 2) .* ((-1).^(mod(order,4)==3)) ./ factorial(order);
                 u.y = Poly(u.o, [x; x .* 2 .^ order;x .* 3 .^ order]);
             elseif simulator.len() == 0
