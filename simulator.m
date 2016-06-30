@@ -115,11 +115,14 @@ classdef simulator < handle
         
         
         % plot the function and make comparasion
-        function plot(this , tt , compare)
-            if nargin >= 3
+        function plot(this , tt , compare, compareVal)
+            if nargin == 3
                 tts = min(tt): (max(tt)-min(tt))/70 : max(tt);
                 plot( tt , this.calc(tt, 0) , '-'  , tts , compare(tts) , '.');
-            else
+            elseif nargin == 4
+                i = find(compare < tt(end));
+                plot( tt , this.calc(tt, 0) , '-'  , compare(i) , compareVal(i) , '.');
+            elseif nargin == 2
                 plot( tt , this.calc(tt, 0) , '-');
             end
         end
