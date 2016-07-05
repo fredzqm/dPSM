@@ -20,7 +20,8 @@ classdef test_sync_problem < AbstractProblem
             if nargin == 0
                 u.o = 10;
                 u.t = 0;
-                u.th = Poly(u.o, [1;1]);
+                thetaInit = [1/2 1 1/2; -1 1 1/2];
+                u.th = Poly(u.o, thetaInit);
                 u.v = Poly(u.o, [1;1;1;1]);
                 u.u = Poly(u.o, [1;1;1;1]);
             else

@@ -32,6 +32,11 @@ coefficient = reshape(coefficient', 1, (N-1) * M);
 %% plot taylor
 hold off
 answer = @(x) exp(x);
-t = linspace(0, 2.8, 1000);
+t = linspace(0, 3, 1000);
 s.plot( t , tt, coefficient );
+
+% error e-2 e-4  CPU time and order
+% number 3
+error = coefficient(end) - s.calc(3)
+
 

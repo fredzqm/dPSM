@@ -17,7 +17,7 @@ classdef test_circuit_problem < AbstractProblem
     
     methods
         function u = test_circuit_problem(last, simulator)
-            segLen = test_circuit_problem.segLen;
+            segLen = test_circuit_problem.seglen;
             u.o = test_circuit_problem.intOrder;
             delaySeg = 1 / segLen;
             if nargin == 0
@@ -61,7 +61,7 @@ classdef test_circuit_problem < AbstractProblem
         end
         
         function v = mainVariable(this)
-            v = this.y(1, :);
+            v = this.y(2, :);
         end
         
         function unit = createCompUnit(last, simulator)
