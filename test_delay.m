@@ -16,5 +16,5 @@ s.compute(3);
 %% find error at t = 3
 % error e-2 e-4  CPU time and order
 % number 3
-error = coefficient(end) - s.calc(3)
+error = (s.calc(3) - start)/start
 

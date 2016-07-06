@@ -7,7 +7,7 @@ classdef test_delay_problem < AbstractProblem
     
     methods
         function u = test_delay_problem(last, simulator)
-            u.o = 10000;
+            u.o = 54;
             if nargin == 0
                 u.t = -1;
                 u.a = Poly(u.o, 1);
