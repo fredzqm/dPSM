@@ -31,7 +31,11 @@ classdef test_delay_problem < AbstractProblem
         function v = mainVariable(this)
             v = this.a;
         end
-
+        
+        function v = getSegLen(this)
+            v = 1;
+        end
+        
     end
     
     methods (Static)

@@ -9,15 +9,21 @@ classdef AbstractProblem < handle
         
         computeOneItr(unit)
         v = mainVariable(this)
+        v = getSegLen(this)
     end
     
     methods
         function compute(t)
             order = t.o;
-            for k = 1 : order
+            segLen = t.getSegLen();
+            for k = 1 : order-1
                 t.o = k;
                 t.computeOneItr();
             end
+            a = t.calc(segLen, 0);
+            t.o = order;
+            t.computeOneItr();
+            b = t.calc(segLen, 0);
         end
                 
         function v = calc(this, t, order)

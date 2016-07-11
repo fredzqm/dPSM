@@ -1,5 +1,7 @@
 %% y' = y*y(t-tau)
 % problem = DefaultProblem({1}, 0 , 1, rel(1,1, 0, 1 , 1) );
+clear;
+test_delay_exactSol
 problem = test_delay_problem;
 s = simulator( problem );
 

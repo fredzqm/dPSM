@@ -18,7 +18,7 @@ classdef test_3_problem < AbstractProblem
                 u.b = Poly(u.o, 0);
                 u.c = Poly(u.o, 1);
             else
-                segLen = 0.001;
+                segLen = u.getSegLen();
                 u.t = segLen * simulator.len();
                 u.a = Poly(u.o, calc(last.a, segLen, 0));
                 u.b = Poly(u.o, calc(last.b, segLen, 0));
@@ -42,6 +42,10 @@ classdef test_3_problem < AbstractProblem
         
         function v = mainVariable(this)
             v = this.a;
+        end
+        
+        function v = getSegLen(this)
+            v = 0.001;
         end
 
     end

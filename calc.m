@@ -20,6 +20,7 @@ function vv = calcZeroOrder(coef, tt)
         vv = vv + coef(i);
     end
 end
+
 function vv = calcDeriv(coef, tt)
     vv = ones(size(tt)) * coef(end);
     for i = size(coef, 2)-1 : -1 : 1

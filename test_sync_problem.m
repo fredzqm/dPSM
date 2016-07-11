@@ -65,7 +65,11 @@ classdef test_sync_problem < AbstractProblem
         function v = mainVariable(this)
             v = this.th(1, :);
         end
+        
+        function v = getSegLen(this)
+            v = 1;
+        end
+        
 
     end
-    
-end
+    end

@@ -61,6 +61,10 @@ classdef test_circuit_problem < AbstractProblem
         function unit = createCompUnit(last, simulator)
             unit = test_circuit_problem(last, simulator);
         end
+        
+        function v = getSegLen(this)
+            v = test_circuit_problem.segLen();
+        end
     end
     
     methods (Static)
