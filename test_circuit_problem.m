@@ -60,14 +60,8 @@ classdef test_circuit_problem < AbstractProblem
             t.y(:, t.o+1) = r / t.o;
         end
         
-        function v = mainVariable(this, newNum)
-            persistent num;
-            if isempty(num)
-                num = 1;
-            end
-            if nargin == 2
-                num = newNum;
-            end
+        function v = mainVariable(this)
+            num = test_circuit_problem.whichVar();
             v = this.y(num, :);
         end
         
@@ -76,4 +70,16 @@ classdef test_circuit_problem < AbstractProblem
         end
     end
     
+    methods (Static)
+        function x = whichVar(x)
+            persistent num;
+            if isempty(num)
+                num = 1;
+            end
+            if nargin == 1
+                num = x;
+            end
+            x = num;
+        end
+    end
 end

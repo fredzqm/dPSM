@@ -7,7 +7,7 @@ classdef test_delay_problem < AbstractProblem
     
     methods
         function u = test_delay_problem(last, simulator)
-            u.o = 54;
+            u.o = test_delay_problem.order();
             if nargin == 0
                 u.t = -1;
                 u.a = Poly(u.o, 1);
@@ -34,4 +34,17 @@ classdef test_delay_problem < AbstractProblem
 
     end
     
+    methods (Static)
+        function x = order(x)
+            persistent num;
+            if isempty(num)
+                num = 10;
+            end
+            if nargin == 1
+                num = x;
+            else
+                x = num;
+            end
+        end
+    end
 end
