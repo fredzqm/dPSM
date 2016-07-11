@@ -4,19 +4,20 @@ problem = test_delay_problem;
 s = simulator( problem );
 
 %% compute
+test_delay_problem.order(36);
 s.compute(3);
 
-
 %% plot taylor
-% hold off
-% answer = @(x) exp(x);
-% t = linspace(0, 3, 1000);
-% s.plot( t , tt, coefficient );
+figure(1)
+t = linspace(0, 3, 1000);
+plot(t, s.calc(t), 'b', tt, coefficient, 'bo');
+legend('find value', 'exact value');
+title('y’ = y y^*, delay = 1, initial history constant = 1.  Segment length = 1, order of integration 36 error -0.0093');
 
 %% find error at t = 3
 % error e-2 e-4  CPU time and order
 % number 3
 
-%% case 1: 
+%% case 1:
 error = (s.calc(3) - start)/start
 

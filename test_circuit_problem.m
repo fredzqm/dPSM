@@ -28,7 +28,7 @@ classdef test_circuit_problem < AbstractProblem
             elseif simulator.len() == 0
                 u.t = segLen * simulator.len();
                 u.y = Poly(u.o, calc(last.y, 0, 0));
-                u.yd = delay(last.y, segLen);
+                u.yd = delay(last.y, +segLen);
                 u.ydd = deriv(u.yd);
             else
                 u.t = segLen * simulator.len();

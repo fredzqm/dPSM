@@ -18,3 +18,7 @@ for i = 1 : M
 end
 tt = linspace(0, M, (N-1) * M );
 coefficient = reshape(coefficient', 1, (N-1) * M);
+
+pt = 1 : N/100: (N-1) * M;
+tt = tt(pt);
+coefficient  = coefficient(pt);
