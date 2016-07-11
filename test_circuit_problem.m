@@ -10,9 +10,9 @@ classdef test_circuit_problem < AbstractProblem
     end
     
     properties (Constant)
-        seglen = 1/100;
+        seglen = 1/1000;
         initOrder = 100;
-        intOrder = 30
+        intOrder = 101;
     end
     
     methods
@@ -60,8 +60,15 @@ classdef test_circuit_problem < AbstractProblem
             t.y(:, t.o+1) = r / t.o;
         end
         
-        function v = mainVariable(this)
-            v = this.y(2, :);
+        function v = mainVariable(this, newNum)
+            persistent num;
+            if isempty(num)
+                num = 1;
+            end
+            if nargin == 2
+                num = newNum;
+            end
+            v = this.y(num, :);
         end
         
         function unit = createCompUnit(last, simulator)
