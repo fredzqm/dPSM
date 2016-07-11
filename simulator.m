@@ -33,7 +33,7 @@ classdef simulator < handle
                     status = curStatus;
                     diff = unit.checkSegDiff();
                     segLen = unit.getSegLen();
-                    fprintf('Computing ... %2d%% error ~= %f in segLen of %f\n', uint8(curStatus*100), diff, segLen);
+                    fprintf('Computing ... %2d%% error ~= %e in segLen of %e\n', uint8(curStatus*100), diff, segLen);
                 end
             end
             fprintf('Computed %d segments in total, up to %d\n', size(this.f, 2), til);
