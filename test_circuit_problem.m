@@ -8,34 +8,28 @@ classdef test_circuit_problem < AbstractProblem
         yd
         ydd
     end
-    
-    properties (Constant)
-        seglen = 1/1000;
-        initOrder = 100;
-        intOrder = 101;
-    end
-    
+        
     methods
         function u = test_circuit_problem(last, simulator)
-            segLen = test_circuit_problem.seglen;
-            u.o = test_circuit_problem.intOrder;
-            delaySeg = 1 / segLen;
+            segLen = test_circuit_problem.segLen();
+            u.o = test_circuit_problem.intOrder();
+            tau = 1;
             if nargin == 0
                 u.t = 0;
-                order = 0:test_circuit_problem.initOrder;
+                order = 0:100;
                 x = mod(order, 2) .* ((-1).^(mod(order,4)==3)) ./ factorial(order);
                 u.y = Poly(u.o, [x; x .* 2 .^ order;x .* 3 .^ order]);
             elseif simulator.len() == 0
-                u.t = segLen * simulator.len();
+                u.t = 0;
                 u.y = Poly(u.o, calc(last.y, 0, 0));
-                u.yd = delay(last.y, +segLen);
+                u.yd = delay(last.y, tau);
                 u.ydd = deriv(u.yd);
             else
                 u.t = segLen * simulator.len();
                 u.y = Poly(u.o, calc(last.y, segLen, 0));
-                [delayToComp, isInitComp] = simulator.lastComp(delaySeg);
+                [delayToComp, isInitComp] = simulator.lastComp(tau / segLen);
                 if isInitComp
-                    u.yd = delay(delayToComp.y, (delaySeg - simulator.len())*segLen);
+                    u.yd = delay(delayToComp.y, tau - u.t);
                 else
                     u.yd = delayToComp.y;
                 end
@@ -43,7 +37,6 @@ classdef test_circuit_problem < AbstractProblem
             end
         end
         
-
         
         % problem = DefaultProblem({1 0 1}, 0 , 0, ...
         %     [rel(1,1/2, 0, [1 3]) rel(1,-2, 1, 2) ...
@@ -78,8 +71,32 @@ classdef test_circuit_problem < AbstractProblem
             end
             if nargin == 1
                 num = x;
+            else
+                x = num;
             end
-            x = num;
         end
+        function x = segLen(x)
+            persistent num;
+            if isempty(num)
+                num = 1/5000;
+            end
+            if nargin == 1
+                num = x;
+            else
+                x = num;
+            end
+        end
+        function x = intOrder(x)
+            persistent num;
+            if isempty(num)
+                num = 60;
+            end
+            if nargin == 1
+                num = x;
+            else
+                x = num;
+            end
+        end
+        
     end
 end
