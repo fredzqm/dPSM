@@ -15,37 +15,29 @@ classdef AbstractProblem < handle
     methods
         function compute(t)
             order = t.o;
-            segLen = t.getSegLen();
-            for k = 1 : order-1
+            for k = 1 : order
                 t.o = k;
                 t.computeOneItr();
             end
-            a = t.calc(segLen, 0);
-            t.o = order;
-            t.computeOneItr();
-            b = t.calc(segLen, 0);
         end
-                
+
+        function diff = checkSegDiff(t)
+            destPt = t.t + t.getSegLen();
+            a = t.calc(destPt, 0);
+            t.o = t.o + 1;
+            t.computeOneItr();
+            b = t.calc(destPt, 0);
+            diff = abs(b-a);
+        end
+        
         function v = calc(this, t, order)
             poly = this.mainVariable();
             v = calc(poly, t - this.t, order);
         end
         
-        
-%         function addIntegTo(t, dest, value)
-%             for i = 1 : size(value, 1)
-%                 dest(i).c(1, t.o+1) = value(i) / t.o;
-%             end
-%         end
-        
         function addTo(t, dest, value)
             dest.c(:, t.o) = value;
         end
-        
-%         function v = get(t, src)
-%             mat = Poly.toMatrix(src);
-%             v = mat(:,t.o);
-%         end
         
         function v = const(t, con)
             if t.o < size(con, 2)

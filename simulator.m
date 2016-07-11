@@ -31,7 +31,9 @@ classdef simulator < handle
                 curStatus = (til-startTime)/(time-startTime);
                 if curStatus - status > 0.01
                     status = curStatus;
-                    fprintf('Computing ... %2d %%\n', uint8(curStatus*100));
+                    diff = unit.checkSegDiff();
+                    segLen = unit.getSegLen();
+                    fprintf('Computing ... %2d%% error ~= %f in segLen of %f\n', uint8(curStatus*100), diff, segLen);
                 end
             end
             fprintf('Computed %d segments in total, up to %d\n', size(this.f, 2), til);

@@ -29,7 +29,7 @@ classdef test_circuit_problem < AbstractProblem
                 u.y = Poly(u.o, calc(last.y, segLen, 0));
                 [delayToComp, isInitComp] = simulator.lastComp(tau / segLen);
                 if isInitComp
-                    u.yd = delay(delayToComp.y, tau - u.t);
+                    u.yd = delay(delayToComp.y, u.t - tau );
                 else
                     u.yd = delayToComp.y;
                 end
