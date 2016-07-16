@@ -15,18 +15,20 @@ classdef test_sync_problem < AbstractProblem
         th2_w2
     end
     
+    
     methods
         function u = test_sync_problem(last, simulator)
+            segLen = test_sync_problem.segLen();
+            intOrder = test_sync_problem.intOrder();
             if nargin == 0
-                u.o = 10;
+                u.o = intOrder;
                 u.t = 0;
                 thetaInit = [1/2 1 1/2; -1 1 1/2];
                 u.th = Poly(u.o, thetaInit);
                 u.v = Poly(u.o, [1;1;1;1]);
                 u.u = Poly(u.o, [1;1;1;1]);
             else
-                segLen = 0.001;
-                u.o = 10;
+                u.o = intOrder;
                 u.t = segLen * simulator.len();
                 u.th = Poly(u.o, calc(last.th, segLen, 0));
                 u.v = Poly(u.o, calc(last.v, segLen, 0));
@@ -63,13 +65,49 @@ classdef test_sync_problem < AbstractProblem
         end
         
         function v = mainVariable(this)
-            v = this.th(1, :);
+            x = test_sync_problem.whichVar();
+            v = this.th(x, :);
         end
         
         function v = getSegLen(this)
             v = 1;
         end
+    end
+    
+    methods (Static)
+        function x = whichVar(x)
+            persistent num;
+            if isempty(num)
+                num = 1;
+            end
+            if nargin == 1
+                num = x;
+            else
+                x = num;
+            end
+        end
+        function x = segLen(x)
+            persistent num;
+            if isempty(num)
+                num = 1/5000;
+            end
+            if nargin == 1
+                num = x;
+            else
+                x = num;
+            end
+        end
+        function x = intOrder(x)
+            persistent num;
+            if isempty(num)
+                num = 60;
+            end
+            if nargin == 1
+                num = x;
+            else
+                x = num;
+            end
+        end
         
-
     end
-    end
+end

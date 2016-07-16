@@ -13,7 +13,7 @@ s.compute(20);
 %% display
 figure(1)
 hold off
-answer = @(x) sin(x);
+answer = @(x) sin(x)
 t = linspace(0, 10, 1000);
 s.plot( t , answer );
 s.plotDeriv( t , 1);
