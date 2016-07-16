@@ -34,11 +34,7 @@ classdef AbstractProblem < handle
             poly = this.mainVariable();
             v = calc(poly, t - this.t, order);
         end
-        
-        function addTo(t, dest, value)
-            dest.c(:, t.o) = value;
-        end
-        
+                
         function v = const(t, con)
             if t.o < size(con, 2)
                 v = con(:, t.o);

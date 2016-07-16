@@ -6,13 +6,10 @@
 classdef test_sync_problem < AbstractProblem
     properties
         th
-        thd
         v
         u
-        th1_w1
-        th1_w2
-        th2_w1
-        th2_w2
+        thd
+        thw
     end
     
     properties (Constant)
@@ -26,7 +23,7 @@ classdef test_sync_problem < AbstractProblem
             N = test_sync_problem.N;
             intOrder = test_sync_problem.intOrder();
             if nargin == 0
-                u.o = 1;
+                u.o = intOrder;
                 u.t = 0;
                 % prepare the initial data --- T, U & V
                 tau = segLen;
@@ -56,28 +53,29 @@ classdef test_sync_problem < AbstractProblem
                 u.v = Poly(u.o, calc(last.v, segLen, 0));
                 u.u = Poly(u.o, calc(last.u, segLen, 0));
                 u.thd = deriv(last.th);
-                u.thw = zeros(N, u.o);
+                u.thw = zeros(N^2, u.o);
             end
         end
         
         function computeOneItr(t)
-            w = (t.v(:, t.o) + t.v(:, t.o))/2 + t.const(1);
-            w1 = (t.v(1, t.o) + t.v(2, t.o))/2 + t.const(1);
-            w2 = (t.v(3, t.o) + t.v(4, t.o))/2 + t.const(1);
-            t.th1_w1(1, t.o) = t.thd(1, t.o) - w1;
-            t.th1_w2(1, t.o) = t.thd(1, t.o) - w2;
-            t.th2_w1(1, t.o) = t.thd(2, t.o) - w1;
-            t.th2_w2(1, t.o) = t.thd(2, t.o) - w2;
-            t.th(1,t.o+1) = w1 / t.o;
-            t.th(2,t.o+1) = w2 / t.o;
-            t.u(1,t.o+1) = t.multiple(t.v(1, :), t.th2_w1) / t.o;
-            t.u(2,t.o+1) = t.multiple(t.v(2, :), t.th1_w1) / t.o;
-            t.u(3,t.o+1) = t.multiple(t.v(3, :), t.th2_w2) / t.o;
-            t.u(4,t.o+1) = t.multiple(t.v(4, :), t.th1_w2) / t.o;
-            t.v(1,t.o+1) = -t.multiple(t.u(1, :), t.th2_w1) / t.o;
-            t.v(2,t.o+1) = -t.multiple(t.u(2, :), t.th1_w1) / t.o;
-            t.v(3,t.o+1) = -t.multiple(t.u(3, :), t.th2_w2) / t.o;
-            t.v(4,t.o+1) = -t.multiple(t.u(4, :), t.th1_w2) / t.o;
+            N = test_sync_problem.N ;
+            K = test_sync_problem.K;
+            for i = 1: N
+                % get appropriate index
+                a = N*(i-1)+1; b = N*i;
+                % get w_i
+                w = sum(t.u( a:b , t.o)) / N * K + t.const(1);
+                % update t.thw -- theta_j - w_i
+                t.thw( a:b , t.o ) = t.thd( : , t.o) - w;
+                % update t.th
+                t.th( i , t.o+1 ) = w / t.o;
+            end
+            for i = 1: N
+                % get appropriate index
+                a = N*(i-1)+1; b = N*i;
+                t.u(a:b, t.o+1) = t.multiple(t.v(a:b, :), t.thw(a:b, :)) / t.o ;
+                t.v(a:b, t.o+1) = - t.multiple(t.u(a:b, :), t.thw(a:b, :)) / t.o ;
+            end
         end
         
         function v = mainVariable(this)
@@ -90,7 +88,7 @@ classdef test_sync_problem < AbstractProblem
         end
         
         function v = getSegLen(this)
-            v = test_sync_problem.tau(x)
+            v = test_sync_problem.tau();
         end
     end
     
