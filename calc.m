@@ -1,6 +1,6 @@
 function v = calc(mat, t, order)
     s = size(mat);
-    if order > 0
+    if nargin == 3 && order > 0
         x = order:s(2)-1;
         for i = 2 : order
             x = x .* (order+1-i:s(2)-i);
