@@ -35,7 +35,7 @@ classdef test_sync_problem < AbstractProblem
                 for i = 1:N
                     ii = (i-1)*N;
                     for j = 1:N
-                        t = calc(T(j, 1:2),-1*tau) - T(j, 1);
+                        t = calc(T(j,:),-1*tau, 0)-calc(T(i,1),0, 0);
                         U(j+ii,1) = sin( t );
                         V(j+ii,1) = cos( t );
                     end
