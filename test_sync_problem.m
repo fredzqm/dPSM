@@ -118,7 +118,7 @@ classdef test_sync_problem < AbstractProblem
         function x = intOrder(x)
             persistent num;
             if isempty(num)
-                num = 60;
+                num = 20;
             end
             if nargin == 1
                 num = x;

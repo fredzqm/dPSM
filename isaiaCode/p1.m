@@ -22,7 +22,6 @@ sv = [':' ':' ':' ':' '-' '-' '-' '-' ':' ':' ':' ':'];
 %   cv = ['b' 'k' 'r' 'g' 'm' 'y' 'r' 'g' 'b' 'k' 'm' 'y'];
 %   sv = ['o' 'o' 'o' 'o' 'o' 'o' '-' '-' '-' '-' '-' '-'];
 %end
-syms x
 for j = 1:N
     To(j,1:2) = [IV(1,j) om(j)];
     T(j,1:2) = [IV(1,j) om(j)];
@@ -76,7 +75,7 @@ for z = 1:m
         for j = 1:N
             U(j+ii,:) = [calc(U(j+ii, 1:ord+1), tau, 0) zeros(1,ord)];
             V(j+ii,:) = [calc(V(j+ii, 1:ord+1), tau, 0) zeros(1,ord)];
-        end
+        end 
     end
 end
 for i = 1:N-1

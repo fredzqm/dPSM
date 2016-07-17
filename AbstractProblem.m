@@ -36,7 +36,7 @@ classdef AbstractProblem < handle
         end
                 
         function v = const(t, con)
-            if t.o < size(con, 2)
+            if t.o <= size(con, 2)
                 v = con(:, t.o);
             else
                 v = zeros(size(con, 2), 1);
@@ -44,9 +44,9 @@ classdef AbstractProblem < handle
         end
         
         function v = multiple(t, a, b)
-            x = a(1:t.o);
-            y = fliplr(b(1:t.o));
-            v = sum(x .* y);
+            x = a(:, 1:t.o);
+            y = fliplr(b(:, 1:t.o));
+            v = sum(x .* y, 2);
         end
         
         function v = multiplePoly(t, a, p)
