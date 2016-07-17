@@ -15,11 +15,12 @@ classdef test_sync_problem < AbstractProblem
     properties (Constant)
         N = 12
         K = 1
+        tau = 1
     end
     
     methods
         function u = test_sync_problem(last, simulator)
-            segLen = test_sync_problem.tau();
+            segLen = test_sync_problem.tau;
             N = test_sync_problem.N;
             intOrder = test_sync_problem.intOrder();
             if nargin == 0
@@ -88,23 +89,12 @@ classdef test_sync_problem < AbstractProblem
         end
         
         function v = getSegLen(this)
-            v = test_sync_problem.tau();
+            v = test_sync_problem.tau;
         end
     end
     
     methods (Static)
         function x = whichVar(x)
-            persistent num;
-            if isempty(num)
-                num = 1;
-            end
-            if nargin == 1
-                num = x;
-            else
-                x = num;
-            end
-        end
-        function x = tau(x)
             persistent num;
             if isempty(num)
                 num = 1;

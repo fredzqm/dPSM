@@ -35,6 +35,7 @@ for i = 1:N
         V(j+ii,1) = cos( t );
     end
 end
+syms x
 for z = 1:m
     Tpo = [To(:,2:ord+1).*M zeros(N,1)];
     for zz = 1:ord
