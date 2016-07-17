@@ -8,8 +8,11 @@ s.compute(50);
 
 %% plot taylor
 figure(1)
-hold off
+hold on
 answer = @(x) sqrt(x+1).*cos(x.^2);
-t = 0 :0.01: 50;
-s.plot( t );
+tt = 0 :0.01: 50;
+for i = 1: test_sync_problem.N
+    test_sync_problem.whichVar(i);
+    plot( tt , s.calc(tt, 1) , '-');
+end
 
