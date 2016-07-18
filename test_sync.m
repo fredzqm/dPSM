@@ -1,5 +1,5 @@
  %% initialize sqrt(x+1)*cos(x^2)
-% clear;
+clear;
 test_sync_problem.K(1);
 test_sync_problem.tau(1);
 test_sync_problem.intOrder(20);
@@ -7,7 +7,7 @@ test_sync_problem.intOrder(20);
 N = test_sync_problem.N;
 tau = test_sync_problem.tau();
 IV = 0.5-(0:11)*6/12; om = pi/2*ones(1,12);
-T = zeros(N,1); U = zeros(N^2,1); V = zeros(N^2,1);                
+T = zeros(N,1); U = zeros(N^2,1); V = zeros(N^2,1);             
 for j = 1:N
     T(j,1:2) = [IV(1,j) om(j)];
 end
@@ -19,10 +19,9 @@ for i = 1:N
         V(j+ii,1) = cos( t );
     end
 end
+init.T = T; init.U = U; init.V = V;
 % end prepare the initial data --- T, U & V
-test_sync_problem.initData(T, U, V);
-
-problem = test_sync_problem;
+problem = test_sync_problem(init);
 s = simulator(problem);
 
 
