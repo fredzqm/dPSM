@@ -14,35 +14,18 @@ classdef test_sync_problem < AbstractProblem
     
     properties (Constant)
         N = 12
-        K = 1
-        tau = 1
+        wo = pi/2
     end
     
     methods
         function u = test_sync_problem(last, simulator)
-            segLen = test_sync_problem.tau;
             N = test_sync_problem.N;
+            segLen = test_sync_problem.tau();
             intOrder = test_sync_problem.intOrder();
             if nargin == 0
                 u.o = intOrder;
                 u.t = 0;
-                % prepare the initial data --- T, U & V
-                tau = segLen;
-                IV = 0.5-(0:11)*6/12; om = pi/2*ones(1,12);
-                T = zeros(N,1); U = zeros(N^2,1); V = zeros(N^2,1);                
-                for j = 1:N
-                    T(j,1:2) = [IV(1,j) om(j)];
-                end
-                for i = 1:N
-                    ii = (i-1)*N;
-                    for j = 1:N
-                        t = calc(T(j,:),-1*tau, 0)-calc(T(i,1),0, 0);
-                        U(j+ii,1) = sin( t );
-                        V(j+ii,1) = cos( t );
-                    end
-                end
-                % end prepare the initial data --- T, U & V
-                
+                [T, V, U] = test_sync_problem.initData();
                 u.th = Poly(u.o, T);
                 u.v = Poly(u.o, V);
                 u.u = Poly(u.o, U);
@@ -60,12 +43,13 @@ classdef test_sync_problem < AbstractProblem
         
         function computeOneItr(t)
             N = test_sync_problem.N ;
-            K = test_sync_problem.K;
+            wo = test_sync_problem.wo;
+            K = test_sync_problem.K();
             for i = 1: N
                 % get appropriate index
                 a = N*(i-1)+1; b = N*i;
                 % get w_i
-                w = sum(t.u( a:b , t.o)) / N * K + t.const(1);
+                w = sum(t.u( a:b , t.o)) / N * K + t.const(wo);
                 % update t.thw -- theta_j - w_i
                 t.thw( a:b , t.o ) = t.thd( : , t.o) - w;
                 % update t.th
@@ -89,12 +73,34 @@ classdef test_sync_problem < AbstractProblem
         end
         
         function v = getSegLen(this)
-            v = test_sync_problem.tau;
+            v = test_sync_problem.tau();
         end
     end
     
     methods (Static)
         function x = whichVar(x)
+            persistent num;
+            if isempty(num)
+                num = 1;
+            end
+            if nargin == 1
+                num = x;
+            else
+                x = num;
+            end
+        end
+        function x = tau(x)
+            persistent num;
+            if isempty(num)
+                num = 1;
+            end
+            if nargin == 1
+                num = x;
+            else
+                x = num;
+            end
+        end
+        function x = K(x)
             persistent num;
             if isempty(num)
                 num = 1;
@@ -116,6 +122,26 @@ classdef test_sync_problem < AbstractProblem
                 x = num;
             end
         end
+        function [T, V, U] = initData(T, V, U)
+            persistent num;
+            persistent num2;
+            persistent num3;
+            if isempty(num)
+                num = 0;
+                num2 = 0;
+                num3 = 0;
+            end
+            if nargin == 3
+                num = T;
+                num2 = V;
+                num3 = U;
+            else
+                T = num ;
+                V = num2 ;
+                U = num3 ;
+            end
+        end
+        
         
     end
 end
