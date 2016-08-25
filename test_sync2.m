@@ -44,4 +44,4 @@ for i = 1: test_sync_problem.N-1
     plot( tt , var{i}-var{i+1} , '-');
 end
 title('Kuramoto-N = 12, w_0 = \pi /2, K = 1.25, \tau = 2, order = 10')
-print -djpeg unsynchronized
+% print -djpeg unsynchronized
