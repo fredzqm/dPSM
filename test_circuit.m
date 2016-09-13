@@ -3,8 +3,10 @@ problem = test_circuit_problem;
 s = simulator(problem);
 
 %% compute
-test_circuit_problem.intOrder(27);
-test_circuit_problem.segLen(1/100);
+intOrder = 10;
+segLen = 1000;
+test_circuit_problem.intOrder(intOrder);
+test_circuit_problem.segLen(1/segLen);
 s.compute(5)
 
 %% plot taylor
@@ -19,8 +21,9 @@ plot( t , s.calc(t) , 'b:');
 test_circuit_problem.whichVar(3);
 plot( t , s.calc(t) , 'b-.');
 legend('1', '2', '3')
-title('segment Length: 1/1000, integration order: 30, compare');
-% print -djpeg order-30-len-1000-compare
+title(sprintf('segment Length: 1/%d, integration order: %d, compare', segLen, intOrder));
+xlabel('t');ylabel('$\vec{y}$', 'interpreter','latex');
+print -djpeg order-10-len-1000-compare
 
 %%
 % figure(2)
