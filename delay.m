@@ -3,11 +3,14 @@ function mat = delay(mat, d)
     if n == 1 || d == 0
         return;
     end
-    x = diag(ones(1, n));
-    x(:, 1) = 1;
+    if size(d, 2) < n
+        d(n) = 0;
+    end
+    d(2) = d(2) + 1;
+    x = zeros(n, n);
+    x(1, 1) = 1;
     for i = 2 : n
-        x(i, 1) = x(i-1, 1) * d;
-        x(i, 2:i-1) = x(i-1, 1:i-2) + x(i-1, 2:i-1) * d;
+        x(i, :) = conv(x(i-1,:) , d, 'same');
     end
     mat = mat * x;
 end
