@@ -11,8 +11,7 @@ s.compute(3);
 
 %% plot taylor
 figure(1)
-t = linspace(0, 3, 1000);
-plot(t, s.calc(t), 'b', tt, coefficient, 'bo');
+plot(tt, s.calc(tt), 'b', tt, coefficient, 'bo');
 legend('find value', 'exact value');
 title('y’ = y y^*, delay = 1, initial history constant = 1.  Segment length = 1, order of integration 36 error -0.0093');
 
