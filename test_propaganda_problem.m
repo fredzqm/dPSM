@@ -2,7 +2,7 @@
 classdef test_propaganda_problem < AbstractProblem
     properties
         a
-%         ad
+        ad
         ax
     end
     
@@ -13,11 +13,11 @@ classdef test_propaganda_problem < AbstractProblem
                 u.t = 0;
                 u.a = Poly(u.o, 0.001);
             else
-                segLen = 0.01;
+                segLen = 2;
                 u.t = simulator.len()*segLen;
                 u.a = Poly(u.o, calc(last.a, segLen, 0));
                 u.ax = zeros(1, u.o);
-%                 u.ad = last.a;
+                u.ad = last.a;
             end
         end
         
@@ -26,8 +26,8 @@ classdef test_propaganda_problem < AbstractProblem
         end
         
         function computeOneItr(t)
-            t.ax(:, t.o) = t.const(1) - t.a(t.o) ;
-            t.a(:, t.o+1) = t.multiple(t.ax, t.a) / t.o / 1;
+            t.ax(:, t.o) = t.const(1) - t.ad(t.o) ;
+            t.a(:, t.o+1) = t.multiple(t.ax, t.ad) / t.o / 1;
         end
         
         function v = mainVariable(this)
