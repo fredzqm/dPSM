@@ -1,15 +1,17 @@
 # dPSM
 A mathematical research project using PSM (Power Series Method) to solve delayed differential equation
 
+Many mathematical models make real-time assumptions about rates.  
 
-# Overview and purpose
-Many mathematical models make real-time assumptions about rates.  Population models like exponential growth and the logistic model have vector fields that depend on the current time, for example, $p'(t)=k p(t)$.  Translated to real terms, this assumes that newly born babies are contributing to the population growth.  In actuality, babies have to grow before they get married and have kids, which can be better modeled by $p'(t)=k*p(t-20)$. Including death by old age and immigration, there is $p'(t)= k_1*p(t-T_1)-k_2*p(t-T_{2})+m(t)$, where $T_1$ 
-is the average marriage age, $T_2$ is the average lifespan and $m(t)$ represents immigration.   Now we have a delay differential equation 
-(DDE) with a pulse.  
+#
 
 In fact, many problems are delay problems in real life, but modelers may avoid these terms because delay problems can be difficult to approximate, and approaches may be ad hoc, in that they may only work for a particular class of problems. I propose a research project using the PSM (Power Series Method) method, as recently adapted for delay problems and dubbed dPSM, and dynamic programming approach to approximate a large class of DDEs.  
 
-\section{Detailed Description}
+# Example Use Case
+Population models like exponential growth and the logistic model have vector fields that depend on the current time, for example, `p'(t)=k p(t)`.  Translated to real terms, this assumes that newly born babies are contributing to the population growth. In reality, babies have to grow before they get married and have kids, which can be better modeled by `p'(t)=k*p(t-20)`. Including death by old age and immigration, there is `p'(t)= k_1*p(t-T_1)-k_2*p(t-T_{2})+m(t)`, where `T_1` is the average marriage age, `T_2` is the average lifespan and `m(t)` represents immigration. Now we have a delay differential equation 
+(DDE) with a pulse.  
+
+# Detailed Description
 The goal of this research is implementing an efficient algorithm based on a PSM approach to approximate delayed differential equation systems. 
 Numerically, the definition of derivative $f'(t) = \lim_{u\rightarrow0}{\frac{f(t+u)-f(t)}{u}}$ would have to be involved. Through this method, the program has to shrink the interval between calculation points to infinitesimal, a very expensive and inaccurate method. A high-order derivative is almost unsolvable efficiently.  Instead, PSM represents the solutions of the system as Taylor polynomials. Rather than taking arbitrary derivatives of a vector field, Picard's iteration are used to generate the Taylor polynomial, which can be executed in a symbolic fashion.
 It is easy to calculate integrals on a polynomial accurately and efficiently.  High-order derivatives for PSM is just a few more steps. Those advantages help us choose PSM as the primary approach to tackling delayed differential system problem.
